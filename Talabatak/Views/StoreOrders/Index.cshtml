@@ -1,0 +1,244 @@
+﻿@model IEnumerable<Talabatak.Models.Domains.StoreOrder>
+@{
+    ViewBag.Title = "طلبات المتاجر فى التطبيق";
+    var Store = ViewBag.Store as Talabatak.Models.Domains.Store;
+    var Stores = ViewBag.Stores as List<Talabatak.Models.Domains.Store>;
+    if (Store != null)
+    {
+        ViewBag.Title = "طلبات " + Store.NameAr;
+    }
+}
+
+@if (User.IsInRole("Store") && Store == null)
+{
+    if (Stores == null || Stores.Count() <= 0)
+    {
+        <p>لا يوجد متاجر متاحه لعرض طلباتها</p>
+    }
+    else
+    {
+        using (Html.BeginForm("Index", "StoreOrders", FormMethod.Get))
+        {
+            <div class="form-group">
+                <label for="StoreId">برجاء اختيار المتجر اولاً</label>
+                <select class="form-control select2" id="StoreId" name="StoreId">
+                    @foreach (var store in Stores)
+                    {
+                        <option value="@store.Id">@store.NameAr - @store.NameEn</option>
+                    }
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">اختيار</button>
+        }
+    }
+}
+else
+{
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-fw fa-shopping-cart"></i> @ViewBag.Title</h3>
+        </div>
+        <div class="panel-body">
+            @using (Html.BeginForm("Index", "StoreOrders", FormMethod.Get))
+            {
+        <div class="form-group">
+            <label for="StoreId">اختيار متجر لعرض منتجاته</label>
+            <select class="form-control select2" id="StoreId" name="StoreId">
+                @foreach (var store in Stores)
+                {
+        <option value="@store.Id">@store.NameAr - @store.NameEn</option>
+}
+            </select>
+        </div>
+                            <button type="submit" class="btn btn-primary">اختيار</button>}
+            @if (Store != null)
+            {
+        <div class="text-center">
+            <hr />
+            <h3>انت الان تتصفح طلبات المتجر [@Store.NameAr]</h3>
+            <hr />
+        </div>}
+
+            <a class="btn btn-sm btn-warning" style="margin-bottom:10px; margin-top:10px" onclick="Export()">تحميل اكسل شيت</a>
+            <div class="table-responsive text-center">
+                <table id="table" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>المتجر</th>
+                            <th class="text-center">الحاله</th>
+                            <th>رقم الطلب</th>
+                            <th>العميل</th>
+                            <th>السعر</th>
+                            <th>التوقيت</th>
+                            <th>السائق</th>
+                            <th>الاجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table_body">
+                        @foreach (var order in Model.OrderByDescending(s => s.CreatedOn))
+                        {
+
+        <tr id="order_@order.Id">
+            <td>
+                @{ var Item = order.Items.FirstOrDefault(w => w.IsDeleted == false);
+                    Talabatak.Models.Domains.Store OrderStore = null;
+                    if (Item != null)
+                    {
+                        OrderStore = Item.Product.Category.Store;
+                    } }
+                @if (OrderStore != null)
+                {
+        <p>@OrderStore.NameAr</p> }
+    else
+    {
+        <p>---</p>}
+            </td>
+            <td>
+                @switch (order.Status)
+                {
+                    case Talabatak.Models.Enums.StoreOrderStatus.Cancelled:
+        <span class="badge bg-red">تم الغاءه</span> break;
+    case Talabatak.Models.Enums.StoreOrderStatus.Delivering:
+        <span class="badge bg-blue">جارى التوصيل</span> break;
+    case Talabatak.Models.Enums.StoreOrderStatus.Finished:
+        <span class="badge bg-success">تم التوصيل</span> break;
+    case Talabatak.Models.Enums.StoreOrderStatus.Placed:
+        <span class="badge bg-orange"><i class="fa fa-exclamation-triangle"></i> جديد</span> break;
+    case Talabatak.Models.Enums.StoreOrderStatus.Preparing:
+        <span class="badge bg-secondary">جارى التحضير</span> break;
+    case Talabatak.Models.Enums.StoreOrderStatus.Rejected:
+        <span class="badge bg-red">مرفوض</span>break;
+}
+            </td>
+            <td>
+                @order.Code
+            </td>
+            <td>
+                @if (order.UserAddressId.HasValue == true)
+                {
+        <p>@order.UserAddress.Name</p>
+                                <p><a href="tel:@order.UserAddress.PhoneNumber">@order.UserAddress.PhoneNumber</a></p> }
+                            else
+                            {
+        <p>@order.User.Name</p>
+                                <p><a href="tel:@order.User.PhoneNumber">@order.User.PhoneNumber</a></p>}
+            </td>
+            <td>
+                @order.Total جنيه
+                @if (order.PaymentMethod == Talabatak.Models.Enums.PaymentMethod.Cash)
+                {
+        <p>
+            الدفع عند الاستلام
+        </p> }
+    else if (order.PaymentMethod == Talabatak.Models.Enums.PaymentMethod.Online)
+    {
+        <p>
+            الدفع اونلاين
+        </p> }
+    else if (order.PaymentMethod == Talabatak.Models.Enums.PaymentMethod.Wallet)
+    {
+        <p>
+            الدفع من المحفظة
+        </p>}
+                @if (order.IsPaid == true)
+                {
+        <p>(<i class="fa fa-check-circle text-success"></i> تم الدفع)</p> }
+    else
+    {
+        <p>(<i class="fa fa-times-circle text-red"></i> لم يتم الدفع)</p>}
+            </td>
+            @{ var CreatedOn = TimeZoneInfo.ConvertTimeFromUtc(order.CreatedOn, TimeZoneInfo.FindSystemTimeZoneById("Sudan Standard Time")); }
+            <td>@CreatedOn.ToString("dd MMM yyyy")<br />@CreatedOn.ToString("hh:mm tt")</td>
+            <td>
+                @if (order.DriverId.HasValue == true)
+                {
+        <p>@order.Driver.User.Name</p>
+                                <p><a href="tel:@order.Driver.User.PhoneNumber">@order.Driver.User.PhoneNumber</a></p> }
+                            else
+                            {
+        <p>بدون</p>}
+            </td>
+            <td>
+                @if (!Item.Product.Category.Store.DeliveryBySystem)
+                {
+        <a class="btn  btn-sm btn-primary" style="margin-bottom:10px" href="@Url.Action("ChangeDriver", new { OrderId = order.Id, ReturnUrl = Request.Url })"> تغير السائق</a>}
+                <a class="btn btn-sm btn-info" style="margin-bottom:10px" href="@Url.Action("Details", new { OrderId = order.Id, ReturnUrl = Request.Url })"><i class="fa fa-info-circle"></i> المعلومات</a> |
+                <a class="btn btn-sm btn-default" style="margin-bottom:10px" href="@Url.Action("Chat", new { OrderId = order.Id, ReturnUrl = Request.Url })"><i class="fa fa-comments"></i> المحادثات</a>|
+
+                @if (order.Status != Talabatak.Models.Enums.StoreOrderStatus.Finished && order.Status != Talabatak.Models.Enums.StoreOrderStatus.Cancelled)
+                {
+
+        <a class="btn btn-sm btn-success" style="margin-bottom:10px" href="@Url.Action("Finshed", new { OrderId = order.Id, ReturnUrl = Request.Url })"><i class="fa fa-check-circle"></i> انهاء الطلب</a> } @*@if (order.Status == Talabatak.Models.Enums.StoreOrderStatus.Preparing)
+    {
+        <span> | </span><a class="btn btn-sm btn-danger" style="margin-bottom:10px" onclick="return confirm('متأكد من رفض الطلب؟')" href="@Url.Action("Reject", new { OrderId = order.Id, ReturnUrl = Request.Url })"><i class="fa fa-times-circle"></i> الرفض</a>
+    }
+    @if (order.Status == Talabatak.Models.Enums.StoreOrderStatus.Placed)
+    {
+        <span> | </span><a class="btn btn-sm btn-success" style="margin-bottom:10px" onclick="return confirm('الموافقه على الطلب والبحث عن سائق؟')" href="@Url.Action("Accept", new { OrderId = order.Id, ReturnUrl = Request.Url })"><i class="fa fa-check-circle"></i> الموافقه</a>
+    }
+    @if (order.Status == Talabatak.Models.Enums.StoreOrderStatus.Placed)
+    {
+        <span> | </span><a class="btn btn-sm btn-danger" style="margin-bottom:10px" onclick="return confirm('متأكد من رفض الطلب؟')" href="@Url.Action("Reject", new { OrderId = order.Id, ReturnUrl = Request.Url })"><i class="fa fa-times-circle"></i> الرفض</a>
+    }*@
+            </td>
+        </tr>
+}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+}
+
+@section Scripts{
+    <script>
+        $(function () {
+            $(".btn-sm").click(function () {
+                $("#cover-spin").show();
+            })
+        })
+    </script>
+    <script>
+        var tHub;
+        $(document).ready(function () {
+            tHub = $.connection.ordersHub;
+            $.connection.hub.start().done(function () {
+                tHub.server.joinDashboardPage();
+            });
+            tHub.client.update = function (Id) {
+                //toastr.info("تم تحديث حاله الطلب رقم " + Code);
+                $.ajax({
+                    url: "@Url.Action("RenderOrderData", "StoreOrders")",
+                    type: "GET",
+                    data: { OrderId: Id },
+                    success: function (results) {
+                        $("#order_" + Id).empty();
+                        $("#order_" + Id).html(results);
+                    }
+                })
+            }
+            tHub.client.add = function (Id) {
+                toastr.info("يوجد طلب جديد");
+                $.ajax({
+                    url: "@Url.Action("RenderOrderData", "StoreOrders")",
+                    type: "GET",
+                    data: { OrderId: Id },
+                    success: function (results) {
+                        var Element = document.createElement("tr");
+                        $(Element).attr("id", "order_" + Id);
+                        $(Element).html(results);
+                        $("#table_body").prepend(Element);
+                    }
+                })
+            }
+        });
+        function Export() {
+             var win = window.open("@Url.RouteUrl(new{ Controller = "StoreOrders", Action = "DownloadExecl"})","_blank");
+                             win.focus();
+                            toastr.success("تم تحميل الملف بنجاح");
+                             window.location.href = "/cp/Index";
+
+        }
+    </script>
+}

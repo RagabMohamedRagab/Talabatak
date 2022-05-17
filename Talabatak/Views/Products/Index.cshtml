@@ -1,0 +1,180 @@
+﻿@model IEnumerable<Talabatak.Models.Domains.Product>
+@{
+    ViewBag.Title = "منتجات التطبيق";
+    var Store = ViewBag.Store as Talabatak.Models.Domains.Store;
+    var Stores = ViewBag.Stores as List<Talabatak.Models.Domains.Store>;
+    if (Store != null)
+    {
+        ViewBag.Title = "منتجات " + Store.NameAr;
+    }
+}
+
+@if (User.IsInRole("Store") && Store == null)
+{
+    if (Stores == null || Stores.Count() <= 0)
+    {
+        <p>لا يوجد متاجر متاحه لعرض منتجاتها</p>
+    }
+    else
+    {
+        using (Html.BeginForm("Index", "Products", FormMethod.Get))
+        {
+            <div class="form-group">
+                <label for="StoreId">برجاء اختيار المنجر اولاً</label>
+                <select class="form-control select2" id="StoreId" name="StoreId">
+                    @foreach (var store in Stores)
+                    {
+                        <option value="@store.Id">@store.NameAr - @store.NameEn</option>
+                    }
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">اختيار</button>
+        }
+    }
+}
+else
+{
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-fw fa-tags"></i> @(ViewBag.Tit!=null? "المنتجات المحذوفة" : "المنتجات المتاحة")</h3>
+        </div>
+        <div class="panel-body">
+            @using (Html.BeginForm("Index", "Products", FormMethod.Get))
+            {
+                <div class="form-group">
+                    <label for="StoreId">اختيار منجر لعرض منتجاته</label>
+                    <select class="form-control select2" id="StoreId" name="StoreId">
+                        <option>اضغط لاختيار المنجر</option>
+                        @foreach (var store in Stores)
+                        {
+                            <option @(ViewBag.StoreId != null && ViewBag.StoreId == store.Id ? "selected" : "") value="@store.Id">@store.NameAr - @store.NameEn</option>
+                        }
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">اختيار</button>
+            }
+            @if (ViewBag.Tit == "Done")
+            {
+            <a style="margin-top:10px" class="btn btn-success" href="@Url.Action("Index", new { DeletedProduct = 0 })">عرض المنتجات المتاحه</a>     
+            }
+            else 
+            { 
+                  <a style="margin-top:10px" class="btn btn-danger" href="@Url.Action("Index", new { DeletedProduct = 1 })">عرض المنتجات المحذوفة</a>
+            }
+            <div class="table-responsive text-center">
+                <table id="table" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>الترتيب</th>
+                            <th class="text-center">الحاله</th>
+                            <th>المنتج</th>
+                            <th>القسم</th>
+                            <th>المالك</th>
+                            <th>السعر</th>
+                            <th>مرات البيع</th>
+                            <th class="text-center">الاجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Model.OrderBy(s => s.SortingNumber))
+                        {
+                        <tr>
+                            <td id="sort_number_@product.Id">@product.SortingNumber</td>
+                            <td>
+                                @if (product.IsDeleted == true)
+                                {
+                                    <span class="badge bg-red">محذوف</span>
+                                }
+                                else if (product.Category.IsDeleted == true)
+                                {
+                                    <span class="badge bg-red">القسم الرئيسى محذوف</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-green">نشط</span>
+                                }
+                            </td>
+                            <td>
+                                @product.NameAr<br />
+                                @product.NameEn
+                            </td>
+                            <td>
+                                @product.Category.NameAr
+                            </td>
+                            <td>@product.Category.Store.NameAr</td>
+                            <td class="text-right">
+                                @if (product.IsMultipleSize == false)
+                                {
+                                    if (product.SingleOfferPrice.HasValue == true)
+                                    {
+                                        <p>السعر قبل: @product.SingleOriginalPrice @(string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr)</p>
+                                        <p>السعر بعد: @product.SingleOfferPrice @(string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr)</p>
+                                    }
+                                            else
+                                            {
+                                        <p>السعر: @product.SingleOriginalPrice @(string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr)</p>
+                                            }
+                                }
+                                else
+                                {
+                                    <p>يتكون من عده احجام:</p>
+                                    <ul>
+                                        @foreach (var size in product.Sizes.Where(s => s.IsDeleted == false))
+                                        {
+                                            if (size.OfferPrice.HasValue == true)
+                                            {
+                                        <li>@size.SizeAr بسعر @size.OriginalPrice  @(string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr) قبل الخصم و @size.OfferPrice  @(string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr) بعد الخصم</li>
+                                            }
+                                            else
+                                            {
+                                    <li>@size.SizeAr بسعر @size.OriginalPrice  @(string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr)</li>
+                                            }
+                                        }
+                                    </ul>
+                                }
+                            </td>
+                            <td>
+                                @product.SellCounter مره
+                            </td>
+                            <td>
+                                <button style="margin-bottom:10px" type="button" id="change-sorting-btn_@product.Id" onclick="ChangeSortingNumber('@product.Id','@product.SortingNumber')">تغير الترتيب</button> |
+                                <a style="margin-bottom:10px" href="@Url.Action("Details", new { ProductId = product.Id })">المعلومات</a> |
+                                <a style="margin-bottom:10px" href="@Url.Action("Edit", new { ProductId = product.Id })"><i class="fa fa-edit"></i></a> |
+                                <a style="margin-bottom:10px" href="@Url.Action("ToggleDelete", new { ProductId = product.Id, ReturnUrl = Request.Url })" class="text-@(product.IsDeleted == true ? "green" : "red")"><i class="fa fa-@(product.IsDeleted == true ? "undo" : "trash")"></i></a>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+
+@section Scripts{
+    <script>
+        function ChangeSortingNumber(Id, oldNumber) {
+            var newNumber = parseInt(window.prompt("قم بكتابه الترتيب الجديد", oldNumber));
+            if (/^[0-9.,]+$/.test(newNumber) == true) {
+                $("#cover-spin").show();
+                $.ajax({
+                    url: "@Url.Action("SetSortingNumber","Products")",
+                    type: "POST",
+                    data: { ProdId: Id, Number: newNumber },
+                    success: function (results) {
+                        if (results.Success == true) {
+                            $("#sort_number_" + Id).text(newNumber);
+                            $("#change-sorting-btn_" + Id).attr("onclick", "ChangeSortingNumber(" + Id + "," + newNumber +")");
+                            toastr.success("تم تحديث الترتيب بنجاح");
+                        }
+                        else {
+                            toastr.error(results.Message);
+                        }
+                        $("#cover-spin").hide();
+                    }
+                })
+            }
+        }
+    </script>
+}

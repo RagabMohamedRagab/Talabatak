@@ -1,0 +1,125 @@
+﻿@model Talabatak.Models.ViewModels.CopyProductCategoryVM
+@{
+    var Stores = ViewBag.Stores as List<Talabatak.Models.Domains.Store>;
+    ViewBag.Title = "نسخ الاقسام والفئات";
+}
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-fw fa-copy"></i> @ViewBag.Title</h3>
+    </div>
+    <div class="panel-body">
+        <h4 class="text-center">@ViewBag.Title</h4>
+        <p>- من خلال الصفحه الحاليه ، يمكن نسخ (المنيو - القسم - الفئات) الخاصه بمتجر ، الى متجر اخر.</p>
+        <p class="text-danger">- قد تستغرق عميله النسخ بضع الوقت ، برجاء عدم غلق الصفحه.</p>
+        <hr />
+        @*@Html.ValidationSummary(false, "", new { @class = "text-danger" })*@
+
+        @if (Stores == null || Stores.Count() <= 0)
+        {
+            <p>لا يوجد متاجر متاحه لعرض اقسامها</p>
+        }
+        else
+        {
+            using (Html.BeginForm("CopyCategory", "ProductCategories", FormMethod.Post))
+            {
+                <div class="form-group">
+                    <label for="FromStoreId">برجاء اختيار المتجر الذى سيتم النسخ منه</label>
+                    <select class="form-control select2" id="FromStoreId" name="FromStoreId" required>
+                        @foreach (var store in Stores)
+                        {
+                            <option @(Model != null && Model.FromStoreId == store.Id ? "selected" : "") value="@store.Id">@store.NameAr - @store.NameEn</option>
+                        }
+                    </select>
+                    @Html.ValidationMessageFor(s => s.FromStoreId, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label for="IsAllCategory" style="margin-left:10px;">نوع النسخ: </label>
+                    @Html.RadioButtonFor(s => s.IsAllCategory, "true", new { Id = "Yes", @checked = Model == null ? true : Model.IsAllCategory })
+                    <label for="Yes" style="margin-left:10px;">نسخ جميع الاقسام</label>
+                    @Html.RadioButtonFor(s => s.IsAllCategory, "false", new { Id = "No" })
+                    <label for="No">نسخ قسم معين</label>
+                </div>
+
+                <div class="form-group" id="categories_container" hidden>
+                    <label for="Categories">برجاء اختيار القسم او الاقسام المطلوب نسخها</label>
+                    <select class="form-control select2" id="Categories" name="Categories" required multiple>
+                        <option>قم باختيار المتجر اولاً</option>
+                    </select>
+                    @Html.ValidationMessageFor(s => s.Categories, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label for="IsAllCategory" style="margin-left:10px;">السماح بنسخ المنتجات داخل القسم: </label>
+                    @Html.RadioButtonFor(s => s.IsCopyProducts, "true", new { Id = "YesProducts", @checked = true })
+                    <label for="YesProducts" style="margin-left:10px;">نسخ المنتجات داخل القسم</label>
+                    @Html.RadioButtonFor(s => s.IsCopyProducts, "false", new { Id = "NoProducts" })
+                    <label for="NoProducts">عدم نسخ المنتجات</label>
+                </div>
+
+                <div class="form-group">
+                    <label for="ToStoreId">برجاء اختيار المتجر المطلوب النسخ إليه</label>
+                    <select class="form-control select2" id="ToStoreId" name="ToStoreId" required>
+                        @foreach (var store in Stores)
+                        {
+                            <option @(Model != null && Model.ToStoreId == store.Id ? "selected" : "") value="@store.Id">@store.NameAr - @store.NameEn</option>
+                        }
+                    </select>
+                    @Html.ValidationMessageFor(s => s.ToStoreId, "", new { @class = "text-danger" })
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-copy"></i> نسخ</button>
+            }
+        }
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function setCategoriesContainer() {
+            var selectedRadio = $('input[name=IsAllCategory]:checked').val();
+            if (selectedRadio == "true") {
+                $("#categories_container").hide();
+                $("#Categories").attr("disabled", true);
+            }
+            else
+            {
+                $("#categories_container").show();
+                $("#Categories").attr("disabled", false);
+            }
+        }
+        $('input[name=IsAllCategory]').click(function () {
+            setCategoriesContainer();
+        })
+
+        $("#FromStoreId").change(function () {
+            $("#cover-spin").show();
+            $.ajax({
+                url: "@Url.Action("GetProductCategories", "ProductCategories")",
+                data: { StoreId: $(this).val() },
+                type: "GET",
+                success: function (results) {
+                    if (results.Success == true) {
+                        $("#Categories").empty();
+                        $("#Categories").val(null).trigger("change");
+                        if (results.Data.length <= 0) {
+                            $("#Categories").append("<option disabled>لا توجد اقسام متاحه لهذا المتجر</option>")
+                        }
+                        else {
+                            for (var i = 0; i < results.Data.length; i++) {
+                                $("#Categories").append("<option value='" + results.Data[i].Id + "'>" + results.Data[i].NameAr + "</option>")
+                            }
+                        }
+                    }
+                    else {
+                        toastr.error(results.Message);
+                    }
+                    $("#cover-spin").hide();
+                }
+            })
+        })
+
+        $("#FromStoreId").trigger("change");
+    </script>
+}
+

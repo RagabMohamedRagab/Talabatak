@@ -1,0 +1,60 @@
+﻿@model Talabatak.Models.Domains.Product
+@{
+    ViewBag.Title = Model.NameAr;
+}
+<style>
+    li {
+        margin: 15px 0px;
+    }
+</style>
+<div class="panel panel-primary">
+    <div class="panel-body">
+        <a class="btn btn-primary" href="javascript:history.back()">العودة</a>
+        <h4>معلومات المنتج [@Model.NameAr]:</h4>
+        <ul>
+            <li><span class="text-blue">الاسم بالعربى: </span> @Model.NameAr</li>
+            <li><span class="text-blue">الاسم بالانجليزى: </span> @Model.NameEn</li>
+            <li><span class="text-blue">الوصف بالعربى: </span> @(Model.DescriptionAr != null ? Model.DescriptionAr : "لا يوجد")</li>
+            <li><span class="text-blue">الوصف بالانجليزى: </span> @(Model.DescriptionEn != null ? Model.DescriptionEn : "لا يوجد")</li>
+            <li><span class="text-blue">القسم: </span>@Model.Category.NameAr</li>
+            <li><span class="text-blue">عدد مرات البيع: </span> @Model.SellCounter مره</li>
+            <li><span class="text-blue">التقييم: </span> @Model.Rate.ToString("N1")</li>
+            <li>
+                <span class="text-blue">الحجم: </span>
+                <p>يتكون من عده احجام:</p>
+                <ul>
+                    @foreach (var size in Model.Sizes.Where(s => s.IsDeleted == false))
+                    {
+                        if (size.OfferPrice.HasValue == true)
+                        {
+                            <li>@size.SizeAr بسعر @size.OriginalPrice  @(string.IsNullOrEmpty(Model.CurrencyAr) ? "ريال" : Model.CurrencyAr) قبل الخصم و @size.OfferPrice  @(string.IsNullOrEmpty(Model.CurrencyAr) ? "ريال" : Model.CurrencyAr) بعد الخصم</li>
+                        }
+                        else
+                        {
+                            <li>@size.SizeAr بسعر @size.OriginalPrice  @(string.IsNullOrEmpty(Model.CurrencyAr) ? "ريال" : Model.CurrencyAr)</li>
+                        }
+                    }
+                </ul>
+            </li>
+            <li>
+                <span class="text-blue">صور المنتج: </span>
+                @if (Model.Images != null && Model.Images.Count(s => s.IsDeleted == false) > 0)
+                {
+                    <div class="row" style="margin:10px">
+                        @foreach (var image in Model.Images.Where(s => s.IsDeleted == false))
+                        {
+                            <div class="col-lg-4">
+                                <a target="_blank" href="~/Content/Images/Products/@image.ImageUrl"><img width="200" src="~/Content/Images/Products/@image.ImageUrl" /></a>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <span>لا يوجد</span>
+                }
+            </li>
+        </ul>
+        <a class="btn btn-primary" href="javascript:history.back()">العودة</a>
+    </div>
+</div>

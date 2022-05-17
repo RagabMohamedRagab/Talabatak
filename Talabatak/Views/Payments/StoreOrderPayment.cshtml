@@ -1,0 +1,30 @@
+﻿@model Talabatak.Models.Domains.StoreOrder
+@{
+    Layout = null;
+    var SuccessUrl = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + "/Payments/StoreOrderSuccess?Order=" + Model.PaymentUniqueKey;
+    var FailedUrl = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + "/Payments/StoreOrderFailed";
+    ViewBag.Title = "جارى التحويل";
+    var Production = "a5ff9c1b-180a-4554-861e-24feb12a0d73";
+    var Test = "6699537a-433c-427d-858a-76d33e397177";
+}
+
+<div style="text-align:center;">
+
+    <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+    <svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="64px" height="64px" viewBox="0 0 128 128" xml:space="preserve"><g><circle cx="16" cy="64" r="16" fill="#000" /><circle cx="16" cy="64" r="16" fill="#555" transform="rotate(45,64,64)" /><circle cx="16" cy="64" r="16" fill="#949494" transform="rotate(90,64,64)" /><circle cx="16" cy="64" r="16" fill="#ccc" transform="rotate(135,64,64)" /><circle cx="16" cy="64" r="16" fill="#e1e1e1" transform="rotate(180,64,64)" /><circle cx="16" cy="64" r="16" fill="#e1e1e1" transform="rotate(225,64,64)" /><circle cx="16" cy="64" r="16" fill="#e1e1e1" transform="rotate(270,64,64)" /><circle cx="16" cy="64" r="16" fill="#e1e1e1" transform="rotate(315,64,64)" /><animateTransform attributeName="transform" type="rotate" values="0 64 64;315 64 64;270 64 64;225 64 64;180 64 64;135 64 64;90 64 64;45 64 64" calcMode="discrete" dur="720ms" repeatCount="indefinite"></animateTransform></g></svg>
+</div>
+<h2 class="my-5 py-5" style="text-align:center;">
+    برجاء الانتظار جارى تحويلكم ...
+</h2>
+<script id="vapulusScript"
+        vapulusId="@Test"
+        amount="@Model.Total"
+        onaccept="@SuccessUrl"
+        onfail="@FailedUrl"
+        src="https://storage.googleapis.com/vapulus-website/script.js"></script>
+<script>
+    (function () {
+        setInterval(function () { document.getElementById("child").click(); }, 10);
+    })();
+</script>
+

@@ -1,0 +1,187 @@
+﻿@model Talabatak.Models.Domains.JobOrder
+@{
+    ViewBag.Title = "تفاصيل الطلب رقم " + Model.Code;
+    var CreatedOn = TimeZoneInfo.ConvertTimeFromUtc(Model.CreatedOn, TimeZoneInfo.FindSystemTimeZoneById("Sudan Standard Time"));
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title no-print">@ViewBag.Title</h3>
+                <div class="box-tools pull-right">
+                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                </div>
+            </div><!-- /.box-header -->
+            <div class="box-body">
+                <div class="text-center" style="margin-bottom:10px;">
+                    <h4 style="margin-bottom:20px;">الطلب رقم @Model.Code</h4>
+                    <h4 style="margin:10px">
+                        @switch (Model.Status)
+                        {
+                            case Talabatak.Models.Enums.JobOrderStatus.AcceptedByWorker:
+                                <span class="badge bg-green">تم موافقه العامل</span>
+                                break;
+                            case Talabatak.Models.Enums.JobOrderStatus.CancelledByAdmin:
+                                <span class="badge bg-red">تم الغاء من الاداره</span>
+                                break;
+                            case Talabatak.Models.Enums.JobOrderStatus.CancelledByUser:
+                                <span class="badge bg-red">تم الغاء من العميل</span>
+                                break;
+                            case Talabatak.Models.Enums.JobOrderStatus.Finished:
+                                <span class="badge bg-success">تم انهاءه</span>
+                                break;
+                            case Talabatak.Models.Enums.JobOrderStatus.Placed:
+                                <span class="badge bg-orange">جديد وبانتظار رد العامل</span>
+                                break;
+                            case Talabatak.Models.Enums.JobOrderStatus.RejectedByWorker:
+                                <span class="badge bg-red">تم رفضه من العامل</span>
+                                break;
+                        }
+                    </h4>
+                    <h4 style="margin:10px" class="no-print">
+                        <br />
+                        <a href="@Url.Action("Orders")" class="btn btn-default no-print">العودة</a>
+                        <button type="button" onclick="window.print();" class="btn"><i class="fa fa-print"></i> طباعة</button>
+                        @if (Model.Status == Talabatak.Models.Enums.JobOrderStatus.AcceptedByWorker ||
+                           Model.Status == Talabatak.Models.Enums.JobOrderStatus.Placed)
+                        {
+                            @Html.ActionLink("إلفاء طلـب", "OrderCancel", new { OrderId = Model.Id }, new { @class = "btn btn-danger", onclick = "return confirm('هل تريد حذف الطلـب');" })
+                        }
+                    </h4>
+                </div>
+                <div>
+                    <table class="table text-center table-bordered" dir="rtl">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    اسم العميل
+                                </td>
+                                <td>
+                                    <p>@(Model.Name == null ? Model.User.Name : Model.Name)</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    رقم هاتف العميل
+                                </td>
+                                <td dir="auto">
+                                    <p><a href="tel:@(Model.PhoneNumber == null ? Model.User.PhoneNumber : Model.PhoneNumber)">@(Model.PhoneNumber == null ? Model.User.PhoneNumber : Model.PhoneNumber)</a></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    عنوان العميل
+                                </td>
+                                <td>
+                                    <span>العنوان: @Model.Address</span><br />
+                                    <span>تفصيل العنوان: @Model.AddressInDetails</span><br />
+                                    <span>رقم المبنى: @Model.Building</span><br />
+                                    <span>رقم الطابق: @Model.Floor</span><br />
+                                    <span>رقم الشقه: @Model.Apartment</span><br />
+                                    @if (Model.Latitude.HasValue == true && Model.Longitude.HasValue == true)
+                                    {
+                                        <span>
+                                            العنوان على الخريطه:
+                                            <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=@Model.Latitude.Value,@Model.Longitude.Value" title="مشاهدة على الخريطة">اضغط هنا</a>
+                                        </span>
+                                    }
+                                    <br />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    بريد العميل
+                                </td>
+                                <td>
+                                    <a href="mailto:@Model.User.Email">@Model.User.Email</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    تكلفه الوظيفه
+                                </td>
+                                <td>
+                                    @if (Model.Status == Talabatak.Models.Enums.JobOrderStatus.Finished)
+                                    {
+                                    <p>
+                                        @Model.TotalPrice جنيه
+                                    </p>
+                                    }
+                                    else
+                                    {
+                                    <p>لم يتم انهاء الوظيفة بعد</p>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    العامل
+                                </td>
+                                <td>
+                                    <p>@Model.Worker.User.Name</p>
+                                    <p><a href="tel:@Model.Worker.User.PhoneNumber">@Model.Worker.User.PhoneNumber</a></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    الوظيفة
+                                </td>
+                                <td>
+                                    @Model.Job.NameAr
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    المطلوب فى الوظيفة
+                                </td>
+                                <td>
+                                    @Model.Description
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>الصور المرفقه</td>
+                                <td>
+                                    @if (Model.Images != null && Model.Images.Count(s => s.IsDeleted == false) > 0)
+                                    {
+                                        foreach (var image in Model.Images.Where(s => s.IsDeleted == false))
+                                        {
+                                            <p><a href="@Talabatak.Helpers.MediaControl.GetPath(Talabatak.Helpers.FilePath.Job)@image.ImageUrl">اضغط هنا</a></p>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p>لا يوجد</p>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    هل تم التقييم من العميل؟
+                                </td>
+                                <td>
+                                    @if (Model.IsUserReviewed == true)
+                                    {
+                                        <span>نعم</span>
+                                        <p>قام بتقييم العامل بـ @Model.UserReviewRate نجوم</p>
+                                        <p>تعليق العميل: @(Model.UserReviewDescription != null ? Model.UserReviewDescription : "لا يوجد")</p>
+                                    }
+                                    else
+                                    {
+                                        <span>لا</span>
+                                    }
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <a href="@Url.Action("Orders")" class="btn btn-default no-print">العودة</a>
+        </div>
+    </div>
+</div>
+
+
+

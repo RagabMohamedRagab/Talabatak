@@ -1,0 +1,192 @@
+﻿@model Talabatak.Models.ViewModels.CreateStoreUserVM
+@{
+    var Store = ViewBag.Store as Talabatak.Models.Domains.Store;
+    ViewBag.Title = "اضافه حساب جديد لدى " + Store.NameAr;
+    var Cities = ViewBag.Cities as List<Talabatak.Models.Domains.City>;
+    var Users = ViewBag.Users as List<Talabatak.Models.Domains.ApplicationUser>;
+}
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-fw fa-plus"></i> @ViewBag.Title</h3>
+    </div>
+    <div class="panel-body">
+        <div id="accordion" class="panel-group" aria-multiselectable="true" role="tablist">
+            <div class="panel panel-success">
+                <div id="collapseOne" class="panel-collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                        <hr />
+                        @using (Html.BeginForm("CreateUser", "Stores", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <input hidden name="StoreId" value="@Store.Id"/>
+
+                            <div class="row" style="margin:10px;">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="UserId" class="col-sm-5 control-label">اختيار عضو من اعضاء التطبيق الحاليين: </label>
+                                            <div class="col-sm-7">
+                                                <select class="form-control select2" name="UserId" id="UserId">
+                                                    <option value="-1" selected>--- اختيار عضو ----</option>
+                                                    @foreach (var user in Users)
+                                                    {
+                                                        <option value="@user.Id">@user.Name - @user.PhoneNumber - @user.Email</option>
+                                                    }
+                                                </select>
+                                                @Html.ValidationMessageFor(d => d.UserId, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 mt-15 mb-15">
+                                        <div class="separator">&nbsp;&nbsp;&nbsp;&nbsp;أو&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                                    </div>
+                                    <div class="col-lg-12 mt-15 mb-15">
+                                        <h4 class="text-center">اضافه مسؤل جديد</h4>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="Name" class="col-sm-5 control-label required">اسم المسؤل:</label>
+                                            <div class="col-sm-7">
+                                                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control valid", required = true } })
+                                                @Html.ValidationMessageFor(d => d.Name, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="CityId" class="col-sm-5 control-label required">المدينة:</label>
+                                            <div class="col-sm-7">
+                                                <select name="CityId" id="CityId" class="form-control select2" required>
+                                                    @foreach (var city in Cities.OrderBy(s => s.Country.NameAr))
+                                                    {
+                                                        <option value="@city.Id" @(Model != null && Model.CityId == city.Id ? "selected" : "")>@city.NameAr - @city.Country.NameAr</option>
+                                                    }
+                                                </select>
+                                                @Html.ValidationMessageFor(d => d.CityId, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" style="margin:10px;">
+                                    <div class="col-lg-6">
+                                        <p class="text-muted">&nbsp;</p>
+                                        <div class="form-group">
+                                            <label for="PhoneNumber" class="col-sm-5 control-label required">رقم الهاتف بدون الكود الدولى:</label>
+                                            <div class="col-sm-7">
+                                                @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control valid", type = "number", required = true } })
+                                                @Html.ValidationMessageFor(d => d.PhoneNumber, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <p class="text-muted">&nbsp;</p>
+                                        <div class="form-group">
+                                            <label for="PhoneNumberCountryCode" class="col-sm-5 control-label required">الكود الدولى لرقم الهاتف:</label>
+                                            <div class="col-sm-7">
+                                                <input dir="ltr" name="PhoneNumberCountryCode" id="PhoneNumberCountryCode" readonly class="form-control text-center" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" style="margin:10px;">
+                                    <div class="col-lg-6">
+                                        <p class="text-muted">&nbsp;</p>
+                                        <div class="form-group">
+                                            <label for="Email" class="col-sm-5 control-label required">البريد الالكترونى:</label>
+                                            <div class="col-sm-7">
+                                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control valid", required = true } })
+                                                @Html.ValidationMessageFor(d => d.Email, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <p class="text-muted">&nbsp;</p>
+                                        <div class="form-group">
+                                            <label for="Image" class="col-sm-5 control-label">صوره المسؤول:</label>
+                                            <div class="col-sm-7">
+                                                <input class="form-control" type="file" name="Image" id="Image" accept="image/*" />
+                                                @Html.ValidationMessageFor(d => d.Image, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" style="margin:10px;">
+                                    <div class="col-lg-6">
+                                        <p class="text-muted">&nbsp;</p>
+                                        <div class="form-group">
+                                            <label for="Password" class="col-sm-5 control-label required">كلمه السر:</label>
+                                            <div class="col-sm-7">
+                                                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control valid", required = true } })
+                                                @Html.ValidationMessageFor(d => d.Password, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <p class="text-muted">&nbsp;</p>
+                                        <div class="form-group">
+                                            <label for="ConfirmPassword" class="col-sm-5 control-label required">تأكيد كلمه السر:</label>
+                                            <div class="col-sm-7">
+                                                @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control valid", required = true } })
+                                                @Html.ValidationMessageFor(d => d.ConfirmPassword, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            <button type="submit" class="btn btn-success">اضافه المستخدم</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            @Html.ActionLink("العودة", "Users", new { StoreId = Store.Id }, new { @class = "btn btn-default" })
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("#CityId").change(function () {
+                var Id = $(this).val();
+                var List = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Cities.Select(x => new { x.Id, x.Country.PhoneCode })));
+                let obj = List.find(o => o.Id == Id);
+                if (obj != null && obj != undefined) {
+                    $("#PhoneNumberCountryCode").val("+" + obj.PhoneCode);
+                }
+            })
+
+            $("#CityId").trigger("change");
+
+            $("#UserId").change(function () {
+                var Id = $(this).val();
+                if (Id == "-1") {
+                    $("#Name").attr("disabled", false);
+                    $("#CityId").attr("disabled", false);
+                    $("#PhoneNumber").attr("disabled", false);
+                    $("#PhoneNumberCountryCode").attr("disabled", false);
+                    $("#Password").attr("disabled", false);
+                    $("#ConfirmPassword").attr("disabled", false);
+                    $("#Email").attr("disabled", false);
+                    $("#Image").attr("disabled", false);
+                }
+                else {
+                    $("#Name").attr("disabled", true);
+                    $("#CityId").attr("disabled", true);
+                    $("#PhoneNumber").attr("disabled", true);
+                    $("#PhoneNumberCountryCode").attr("disabled", true);
+                    $("#Password").attr("disabled", true);
+                    $("#ConfirmPassword").attr("disabled", true);
+                    $("#Email").attr("disabled", true);
+                    $("#Image").attr("disabled", true);
+                }
+            })
+
+            $("#UserId").trigger("change");
+        })
+    </script>
+}

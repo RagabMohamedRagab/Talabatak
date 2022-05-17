@@ -1,0 +1,300 @@
+﻿@model Talabatak.Models.Domains.MetaData
+@{
+    ViewBag.Title = "بيانات ومعلومات تشغيل الموقع و التطبيق";
+}
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-fw fa-database"></i> @ViewBag.Title</h3>
+    </div>
+    <div class="panel-body">
+        @*@Html.ValidationSummary(false, "", new { @class = "text-danger" })*@
+        <div id="accordion" class="panel-group" aria-multiselectable="true" role="tablist">
+            <div class="panel panel-success">
+                <div id="collapseOne" class="panel-collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        @using (Html.BeginForm("Index", "MetaData", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            if (Model != null)
+                            {
+                                @Html.HiddenFor(d => d.Id)
+                            }
+                           
+                            <h4 class="text-danger">طلبات المتاجر والمطاعم: </h4>
+                            <br />
+                            <div class="row" style="margin:10px">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="StoreOrdersDeliveryOpenFarePrice" class="col-sm-5 control-label">سعر فتحة العداد:</label>
+                                        <div class="col-sm-7">
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.StoreOrdersDeliveryOpenFarePrice, new { @class = "form-control valid", type = "number", step = "any", required = true })
+                                                <span class="input-group-addon">جنيه</span>
+                                            </div>
+                                            @Html.ValidationMessageFor(s => s.StoreOrdersDeliveryOpenFarePrice, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="StoreOrdersDeliveryOpenFareKilometers" class="col-sm-5 control-label">عدد كيلومترات فتحة العداد:</label>
+                                        <div class="col-sm-7">
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.StoreOrdersDeliveryOpenFareKilometers, new { @class = "form-control valid", type = "number", step = "any", required = true })
+                                                <span class="input-group-addon">كيلو</span>
+                                            </div>
+                                            @Html.ValidationMessageFor(s => s.StoreOrdersDeliveryOpenFareKilometers, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin:10px">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="StoreOrdersDeliveryEveryKilometerPrice" class="col-sm-5 control-label">تكلفه كل كيلومتر زيادة:</label>
+                                        <div class="col-sm-7">
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.StoreOrdersDeliveryEveryKilometerPrice, new { @class = "form-control valid", type = "number", step = "any", required = true })
+                                                <span class="input-group-addon">جنيه</span>
+                                            </div>
+                                            @Html.ValidationMessageFor(s => s.StoreOrdersDeliveryEveryKilometerPrice, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr />
+
+                            <h4 class="text-danger">طلبات اطلب اى حاجه: </h4>
+                            <br />
+                            <div class="row" style="margin:10px">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="OtlobAy7agaDeliveryOpenFarePrice" class="col-sm-5 control-label">سعر فتحة العداد:</label>
+                                        <div class="col-sm-7">
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.OtlobAy7agaDeliveryOpenFarePrice, new { @class = "form-control valid", type = "number", step = "any", required = true })
+                                                <span class="input-group-addon">جنيه</span>
+                                            </div>
+                                            @Html.ValidationMessageFor(s => s.OtlobAy7agaDeliveryOpenFarePrice, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="OtlobAy7agaDeliveryOpenFareKilometers" class="col-sm-5 control-label">عدد كيلومترات فتحة العداد:</label>
+                                        <div class="col-sm-7">
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.OtlobAy7agaDeliveryOpenFareKilometers, new { @class = "form-control valid", type = "number", step = "any", required = true })
+                                                <span class="input-group-addon">كيلو</span>
+                                            </div>
+                                            @Html.ValidationMessageFor(s => s.OtlobAy7agaDeliveryOpenFareKilometers, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin:10px">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="OtlobAy7agaDeliveryEveryKilometerPrice" class="col-sm-5 control-label">تكلفه كل كيلومتر زيادة:</label>
+                                        <div class="col-sm-7">
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.OtlobAy7agaDeliveryEveryKilometerPrice, new { @class = "form-control valid", type = "number", step = "any", required = true })
+                                                <span class="input-group-addon">جنيه</span>
+                                            </div>
+                                            @Html.ValidationMessageFor(s => s.OtlobAy7agaDeliveryEveryKilometerPrice, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="OtlobAy7agaDeliveryStaticExtraFees" class="col-sm-5 control-label">التكلفه الاضافيه الثابته على سعر التوصيل:</label>
+                                        <div class="col-sm-7">
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.OtlobAy7agaDeliveryStaticExtraFees, new { @class = "form-control valid", type = "number", step = "any", required = true })
+                                                <span class="input-group-addon">جنيه</span>
+                                            </div>
+                                            @Html.ValidationMessageFor(s => s.OtlobAy7agaDeliveryStaticExtraFees, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr />
+
+                            <h4 class="text-danger">بيانات اضافيه: </h4>
+                            <br />
+                            <div class="row" style="margin:10px">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="NumberOfAvailableOrdersPerDriver" class="col-sm-5 control-label">عدد الطلبات المسموح بها لكل سائق فى نفس الوقت:</label>
+                                        <div class="col-sm-7">
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.NumberOfAvailableOrdersPerDriver, new { @class = "form-control valid", type = "number", step = "1", required = true })
+                                                <span class="input-group-addon">طلب</span>
+                                            </div>
+                                            @Html.ValidationMessageFor(s => s.NumberOfAvailableOrdersPerDriver, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="NumberOfMinutesBeforeCancellingOrderWithoutDriver" class="col-sm-5 control-label">فى حاله عدم وجود سائق لطلب ما ، عدد الدقائق قبل الغاء الطلب:</label>
+                                        <div class="col-sm-7">
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.NumberOfMinutesBeforeCancellingOrderWithoutDriver, new { @class = "form-control valid", type = "number", step = "1", required = true })
+                                                <span class="input-group-addon">دقيقة</span>
+                                            </div>
+                                            @Html.ValidationMessageFor(s => s.NumberOfMinutesBeforeCancellingOrderWithoutDriver, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin:10px">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="WalletMinimumAmountToCharge" class="col-sm-5 control-label">الحد الادنى المسموح لشحن محفظه المستخدم:</label>
+                                        <div class="col-sm-7">
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.WalletMinimumAmountToCharge, new { @class = "form-control valid", type = "number", step = "any", required = true })
+                                                <span class="input-group-addon">جنيه</span>
+                                            </div>
+                                            @Html.ValidationMessageFor(s => s.WalletMinimumAmountToCharge, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6" style="margin:1px">
+                                    <div class="form-group">
+                                        <label for="WalletMaximumAmountToCharge" class="col-sm-5 control-label">رسوم تأخير استلام الطلب :</label>
+                                        <div class="col-sm-7">
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.WalletMaximumAmountToCharge, new { @class = "form-control valid", type = "number", step = "any", required = true })
+                                                <span class="input-group-addon">جنيه</span>
+                                            </div>
+                                            @Html.ValidationMessageFor(s => s.WalletMaximumAmountToCharge, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="WalletMaximumAmountToCharge" class="col-sm-5 control-label">الحد الاقصى المسموح لشحن محفظه المستخدم:</label>
+                                        <div class="col-sm-7">
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.FineForLate, new { @class = "form-control valid", type = "number", step = "any", required = true })
+                                                <span class="input-group-addon">جنيه</span>
+                                            </div>
+                                            @Html.ValidationMessageFor(s => s.WalletMaximumAmountToCharge, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+
+                            <h4 class="text-danger">معلومات ووسائل الاتصال:</h4>
+                            <br />
+                            <div class="row" style="margin:10px">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="Email" class="col-sm-5 control-label">البريد الالكترونى:</label>
+                                        <div class="col-sm-7">
+                                            @Html.TextBoxFor(model => model.Email, new { @class = "form-control valid", type = "email" })
+                                            @Html.ValidationMessageFor(s => s.Email, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="Facebook" class="col-sm-5 control-label">الفيسبوك:</label>
+                                        <div class="col-sm-7">
+                                            @Html.TextBoxFor(model => model.Facebook, new { @class = "form-control valid", type = "url" })
+                                            @Html.ValidationMessageFor(s => s.Facebook, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="margin:10px;">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="WhatsApp" class="col-sm-5 control-label">الواتس اب:</label>
+                                        <div class="col-sm-7">
+                                            @Html.TextBoxFor(model => model.WhatsApp, new { @class = "form-control valid", type = "number" })
+                                            @Html.ValidationMessageFor(s => s.WhatsApp, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="LinkedIn" class="col-sm-5 control-label">لينكد ان:</label>
+                                        <div class="col-sm-7">
+                                            @Html.TextBoxFor(model => model.LinkedIn, new { @class = "form-control valid", type = "url" })
+                                            @Html.ValidationMessageFor(s => s.LinkedIn, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin:10px;">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="Twitter" class="col-sm-5 control-label">تويتر:</label>
+                                        <div class="col-sm-7">
+                                            @Html.TextBoxFor(model => model.Twitter, new { @class = "form-control valid", type = "url" })
+                                        </div>
+                                        @Html.ValidationMessageFor(s => s.Twitter, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="Instagram" class="col-sm-5 control-label">الانستجرام:</label>
+                                        <div class="col-sm-7">
+                                            @Html.TextBoxFor(model => model.Instagram, new { @class = "form-control valid", type = "url" })
+                                        </div>
+                                        @Html.ValidationMessageFor(s => s.Instagram, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin:10px;">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="Address" class="col-sm-5 control-label">العنوان:</label>
+                                        <div class="col-sm-7">
+                                            @Html.TextBoxFor(model => model.Address, new { @class = "form-control valid" })
+                                        </div>
+                                        @Html.ValidationMessageFor(s => s.Address, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="Phone" class="col-sm-5 control-label">رقم التواصل:</label>
+                                        <div class="col-sm-7">
+                                            @Html.TextBoxFor(model => model.Phone, new { @class = "form-control valid" })
+                                        </div>
+                                        @Html.ValidationMessageFor(s => s.Phone, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin:10px;">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="Fax" class="col-sm-5 control-label">الفاكس:</label>
+                                        <div class="col-sm-7">
+                                            @Html.TextBoxFor(model => model.Fax, new { @class = "form-control valid" })
+                                        </div>
+                                        @Html.ValidationMessageFor(s => s.Fax, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <button type="submit" class="btn btn-success">حفظ</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

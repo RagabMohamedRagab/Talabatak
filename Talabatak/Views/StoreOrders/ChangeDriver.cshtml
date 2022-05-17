@@ -1,0 +1,42 @@
+﻿
+@model Talabatak.Models.ViewModels.ChangeDriver
+@{
+    ViewBag.Title = "تغيـر الســائق";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title no-print">تغــير السائق</h3>
+                <div class="box-tools pull-right">
+                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                </div>
+            </div><!-- /.box-header -->
+            <div class="box-body">
+                <a href="@ViewBag.ReturnUrl" class="btn btn-default no-print">العودة</a>
+                <br />
+                <hr />
+                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                @using (Html.BeginForm("ChangeDriver", "StoreOrders", FormMethod.Post))
+                {
+                    @Html.HiddenFor(w => w.OrderId)
+                    <div class="row" style="margin:10px;">
+                        <div class="col-lg-12 mb-20">
+                            <h4 class="text-center">أختر الســائق الجديد</h4>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="Name" class="col-sm-5 control-label required">الاسم:</label>
+                                <div class="col-sm-7">
+                                    @Html.DropDownListFor(x => x.DriverId, ViewBag.Drivers as SelectList, "اخترالسائق", new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success">تغــير الســائق</button>
+
+                }
+            </div>
+        </div>
+    </div>
+</div>

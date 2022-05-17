@@ -1,0 +1,93 @@
+﻿@model IEnumerable<Talabatak.Models.Domains.JobOrder>
+@{
+    ViewBag.Title = "طلبات المهن والوظائف";
+}
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-fw fa-reply"></i> @ViewBag.Title</h3>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="table" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>الحاله</th>
+                        <th>العميل</th>
+                        <th>العامل</th>
+                        <th>الوظيفة</th>
+                        <th>التفاصيل</th>
+                        <th>التوقيت</th>
+                        <th>التحكم</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Code</td>
+                            <td>
+                                @switch (item.Status)
+                                {
+                                    case Talabatak.Models.Enums.JobOrderStatus.AcceptedByWorker:
+                                        <p class="badge bg-green">تم موافقه العامل</p>
+                                        break;
+                                    case Talabatak.Models.Enums.JobOrderStatus.CancelledByAdmin:
+                                        <p class="badge bg-red">تم الغاء من الاداره</p>
+                                        break;
+                                    case Talabatak.Models.Enums.JobOrderStatus.CancelledByUser:
+                                        <p class="badge bg-red">تم الغاء من العميل</p>
+                                        break;
+                                    case Talabatak.Models.Enums.JobOrderStatus.Finished:
+                                        <p class="badge bg-success">تم انهاءه</p>
+                                        break;
+                                    case Talabatak.Models.Enums.JobOrderStatus.Placed:
+                                        <p class="badge bg-orange">جديد وبانتظار رد العامل</p>
+                                        break;
+                                    case Talabatak.Models.Enums.JobOrderStatus.RejectedByWorker:
+                                        <p class="badge bg-red">تم رفضه من العامل</p>
+                                        break;
+                                }
+                            </td>
+                            <td>
+                                <p>@(item.Name == null ? item.User.Name : item.Name)</p>
+                                <p dir="auto"><a dir="auto" href="tel:@(item.PhoneNumber == null ? item.User.PhoneNumber : item.PhoneNumber)">@(item.PhoneNumber == null ? item.User.PhoneNumber : item.PhoneNumber)</a></p>
+                            </td>
+                            <td>
+                                <p>@item.Worker.User.Name</p>
+                                <p><a href="tel:@item.Worker.User.PhoneNumber">@item.Worker.User.PhoneNumber</a></p>
+                                <p>كود الانهاء: @item.FinishCode</p>
+                            </td>
+                            <td>
+                                <p>@item.Job.NameAr</p>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("OrderDetails", "AppJobs", new { OrderId = item.Id })" class="btn btn-info btn-sm"><i class="fa fa-info-circle"></i> التفاصيل</a>
+                            </td>
+                            <td>
+                                <p dir="auto">
+                                    @{ 
+                                        var CreatedOn = TimeZoneInfo.ConvertTimeFromUtc(item.CreatedOn, TimeZoneInfo.FindSystemTimeZoneById("Sudan Standard Time"));
+                                    }
+                                    @CreatedOn.ToString("dd MMMM yyyy, hh:mm tt")
+                                </p>
+                            </td>
+                            <td>
+                                <a class="btn  btn-sm btn-primary" style="margin-bottom:10px" href="@Url.Action("ChangeWorker", new { OrderId = item.Id, ReturnUrl = Request.Url })"> تغير العامــل</a>
+                                @if (item.Status == Talabatak.Models.Enums.JobOrderStatus.AcceptedByWorker || item.Status == Talabatak.Models.Enums.JobOrderStatus.Placed)
+                                {
+                            <a class="btn btn-danger" href="@Url.Action("RejectOrder", new { OrderId = item.Id })" onclick="return confirm('هل انت متاكد من الغاء هذا الطلب؟')">الغاء الطلب</a> <span>|</span>}
+                                <a class="btn btn-sm btn-default" style="margin-bottom:10px" href="@Url.Action("Chat", new { OrderId = item.Id, ReturnUrl = Request.Url })"><i class="fa fa-comments"></i> المحادثات</a>
+                                @if (item.Status != Talabatak.Models.Enums.JobOrderStatus.Finished && item.Status != Talabatak.Models.Enums.JobOrderStatus.CancelledByAdmin && item.Status != Talabatak.Models.Enums.JobOrderStatus.CancelledByAdmin)
+                                {
+                                <a class="btn btn-sm btn-success" style="margin-bottom:10px" href="@Url.Action("Finshed", new { OrderId = item.Id, ReturnUrl = Request.Url })"><i class="fa fa-check-circle"></i> انهاء الطلب</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

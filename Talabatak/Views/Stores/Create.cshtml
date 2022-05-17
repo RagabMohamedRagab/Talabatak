@@ -1,0 +1,471 @@
+﻿@model  Talabatak.Models.ViewModels.CreateStoreVM
+@{
+    ViewBag.Title = "اضافه منجر جديد";
+    var Cities = ViewBag.Cities as List<Talabatak.Models.Domains.City>;
+}
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-fw fa-plus"></i> @ViewBag.Title</h3>
+    </div>
+    <div class="panel-body">
+        <div id="accordion" class="panel-group" aria-multiselectable="true" role="tablist">
+            <div class="panel panel-success">
+                <div id="collapseOne" class="panel-collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                        <hr />
+                        @using (Html.BeginForm("Create", "Stores", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <div class="row" style="margin:10px;">
+                                <div class="col-lg-12 text-danger mb-15">
+                                    <h4>&bull; بيانات المنجر</h4>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="CityId" class="col-sm-5 control-label required">المدينة: </label>
+                                        <div class="col-sm-7">
+                                            <select name="CityId" id="CityId" class="form-control select2" required>
+                                                @foreach (var city in Cities.OrderBy(s => s.Country.NameAr).ThenBy(w => w.NameAr))
+                                                {
+                                                    <option value="@city.Id" @(Model != null && Model.CityId == city.Id ? "selected" : "")>@city.NameAr - @city.Country.NameAr</option>
+                                                }
+                                            </select>
+                                            @Html.ValidationMessageFor(d => d.CityId, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="Category" class="col-sm-5 control-label required">القسم: </label>
+                                        <div class="col-sm-7">
+                                            @Html.DropDownList("CategoryId", null, new { @class = "form-control", required = true })
+                                            @Html.ValidationMessageFor(d => d.CategoryId, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin:10px;">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="NameAr" class="col-sm-5 control-label required">اسم المنجر بالعربى: </label>
+                                        <div class="col-sm-7">
+                                            @Html.EditorFor(model => model.NameAr, new { htmlAttributes = new { @class = "form-control valid", required = true } })
+                                            @Html.ValidationMessageFor(d => d.NameAr, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="NameEn" class="col-sm-5 control-label required">اسم المنجر بالانجليزى:</label>
+                                        <div class="col-sm-7">
+                                            @Html.EditorFor(model => model.NameEn, new { htmlAttributes = new { @class = "form-control valid", required = true } })
+                                            @Html.ValidationMessageFor(d => d.NameEn, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin:10px">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="DescriptionAr" class="col-sm-5 control-label">وصف المنجر بالعربى:</label>
+                                        <div class="col-sm-7">
+                                            @Html.TextAreaFor(model => model.DescriptionAr, htmlAttributes: new { @class = "form-control", rows = 4 })
+                                            @Html.ValidationMessageFor(d => d.DescriptionAr, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="DescriptionEn" class="col-sm-5 control-label">وصف المنجر بالانجليزى:</label>
+                                        <div class="col-sm-7">
+                                            @Html.TextAreaFor(model => model.DescriptionEn, htmlAttributes: new { @class = "form-control", rows = 4 })
+                                            @Html.ValidationMessageFor(d => d.DescriptionEn, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin:10px">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="PhoneNumber" class="col-sm-5 control-label required">رقم هاتف المنجر:</label>
+                                        <div class="col-sm-7">
+                                            @Html.TextBoxFor(model => model.PhoneNumber, htmlAttributes: new { @class = "form-control", required = true, type = "number", onKeyPress = "if(this.value.length==11) return false;" })
+                                            @Html.ValidationMessageFor(d => d.PhoneNumber, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin:10px">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="AddressAr" class="col-sm-5 control-label ">عنوان المنجر بالعربى:</label>
+                                        <div class="col-sm-7">
+                                            @Html.TextBoxFor(model => model.AddressAr, htmlAttributes: new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(d => d.AddressAr, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="AddressEn" class="col-sm-5 control-label ">عنوان المنجر بالانجليزى:</label>
+                                        <div class="col-sm-7">
+                                            @Html.TextBoxFor(model => model.AddressEn, htmlAttributes: new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(d => d.AddressEn, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="row" style="margin:10px">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="PhoneNumber" class="col-sm-5 control-label required">البريد الالكتروني الرسمي:</label>
+                                        <div class="col-sm-7">
+                                            @Html.TextBoxFor(model => model.OfficialEmail, htmlAttributes: new { @class = "form-control"})
+                                            @Html.ValidationMessageFor(d => d.OfficialEmail, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="PhoneNumber" class="col-sm-5 control-label required">تأكيد البريد الالكتروني الرسمي :</label>
+                                        <div class="col-sm-7">
+                                            @Html.TextBoxFor(model => model.ConfirmOfficialEmail, htmlAttributes: new { @class = "form-control"})
+                                            @Html.ValidationMessageFor(d => d.ConfirmOfficialEmail, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="margin:10px">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="PhoneNumber" class="col-sm-5 control-label required">رقم السجل التجارى:</label>
+                                        <div class="col-sm-7">
+                                            @Html.TextBoxFor(model => model.TaxReportNumber, htmlAttributes: new { @class = "form-control", required = true, type = "number", onKeyPress = "if(this.value.length==11) return false;" })
+                                            @Html.ValidationMessageFor(d => d.TaxReportNumber, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="PhoneNumber" class="col-sm-5 control-label required">صورة السجل التجاري:</label>
+                                        <div class="col-sm-7">
+                                            <input class="form-control" type="file" required name="TaxReportImage" id="TaxReportImage" accept="image/*" />
+                                            @Html.ValidationMessageFor(d => d.TaxReportImage, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin:10px">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="AddressAr" class="col-sm-5 control-label ">نسبةالخصم:</label>
+                                        <div class="col-sm-4">
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.Profit, htmlAttributes: new { @class = "form-control" })
+                                                <span class="input-group-addon bg-gray">%</span>
+                                            </div>
+                                            @Html.ValidationMessageFor(d => d.Profit, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                </div>
+                            </div>
+                            <div class="row" style="margin:10px;">
+                                <div class="col-lg-6">
+                                    <p class="text-muted">&nbsp;</p>
+                                    <div class="form-group">
+                                        <label for="StoreLogo" class="col-sm-5 control-label required">صوره شعار المنجر:</label>
+                                        <div class="col-sm-7">
+                                            <input class="form-control" type="file" required name="StoreLogo" id="StoreLogo" accept="image/*" />
+                                            @Html.ValidationMessageFor(d => d.StoreLogo, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <p class="text-muted">&nbsp;</p>
+                                    <div class="form-group">
+                                        <label for="CoverImage" class="col-sm-5 control-label">صوره غلاف المنجر:</label>
+                                        <div class="col-sm-7">
+                                            <input class="form-control" type="file" name="CoverImage" id="CoverImage" accept="image/*" />
+                                            @Html.ValidationMessageFor(d => d.CoverImage, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="margin:10px;">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="StoreLogo" class="col-sm-5 control-label required">
+                                            هل منشأتك مسجلة في ضريبة القيمة المضافة؟:
+                                        </label>
+                                        <div class="col-sm-7">
+                                            @Html.EditorFor(d => d.ValueAddedTax)
+                                            @Html.ValidationMessageFor(d => d.ValueAddedTax, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" id="Tax" style="margin:10px;display:none">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="PhoneNumber" class="col-sm-5 control-label required">صورة شهادة ضريبة القيمة المضافة:</label>
+                                        <div class="col-sm-7">
+                                            <input class="form-control" type="file" required name="ValueAddedTaxImage" id="ValueAddedTaxImage" accept="image/*" />
+                                            @Html.ValidationMessageFor(d => d.ValueAddedTaxImage, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="PhoneNumber" class="col-sm-5 control-label required">صورة شهادة الضريبة:</label>
+                                        <div class="col-sm-7">
+                                            <input class="form-control" type="file" required name="TaxImage" id="TaxImage" accept="image/*" />
+                                            @Html.ValidationMessageFor(d => d.TaxImage, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="row" style="margin:10px;">
+                                    <hr />
+                                    <div class="col-lg-12 text-danger">
+                                        <h4>&bull; مواعيد العمل</h4>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <p class="text-muted">&nbsp;</p>
+                                        <div class="form-group">
+                                            <label for="StoreLogo" class="col-sm-5 control-label required">توقيت العمل:</label>
+                                            <div class="col-sm-7">
+                                                @Html.EditorFor(d => d.Is24HourOpen)
+                                                <label for="Is24HourOpen">المنجر يعمل 24 ساعه</label>
+                                                @Html.ValidationMessageFor(d => d.Is24HourOpen, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <p class="text-muted">&nbsp;</p>
+                                        <div class="form-group">
+                                            <div class="col-sm-6">
+                                                <label for="From" class="col-sm-5 control-label required">من:</label>
+                                                <div class="input-group" dir="ltr">
+                                                    @Html.EditorFor(model => model.From, new { htmlAttributes = new { @class = "form-control datetimepicker-input", data_target = "#timepickerfrom", data_toggle = "datetimepicker", required = true } })
+                                                    @Html.ValidationMessageFor(d => d.From, "", new { @class = "text-danger" })
+                                                    <div class="input-group-append" data-target="#timepickerfrom" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="far fa-clock"></i></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label for="To" class="col-sm-5 control-label required">الى:</label>
+                                                <div class="input-group" dir="ltr">
+                                                    @Html.EditorFor(model => model.To, new { htmlAttributes = new { @class = "form-control datetimepicker-input", data_target = "#timepickerto", data_toggle = "datetimepicker", required = true } })
+                                                    @Html.ValidationMessageFor(d => d.To, "", new { @class = "text-danger" })
+                                                    <div class="input-group-append" data-target="#timepickerto" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="far fa-clock"></i></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin:10px;">
+                                    <hr />
+                                    <div class="col-lg-12 text-danger">
+                                        <h4>&bull; توصيل الطلبات</h4>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <p class="text-muted">&nbsp;</p>
+                                        <div class="form-group">
+                                            <label for="StoreLogo" class="col-sm-5 control-label required">طريقة التوصيل:</label>
+                                            <div class="col-sm-7">
+                                                @Html.EditorFor(d => d.DeliveryBySystem)
+                                                <label for="Is24HourOpen">من خلال التطبيق</label>
+                                                @Html.ValidationMessageFor(d => d.Is24HourOpen, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <p class="text-muted">&nbsp;</p>
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <label for="StoreOrdersDeliveryOpenFarePrice" class="col-sm-5 control-label required">سعر فتحة العداد:</label>
+                                                <div class="input-group">
+                                                    @Html.EditorFor(model => model.StoreOrdersDeliveryOpenFarePrice, new { htmlAttributes = new { @class = "form-control valid", required = true } })
+                                                    @Html.ValidationMessageFor(d => d.StoreOrdersDeliveryOpenFarePrice, "", new { @class = "text-danger" })
+
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label for="StoreOrdersDeliveryOpenFareKilometers" class="col-sm-5 control-label required">عدد كيلو متر فتحة العداد:</label>
+                                                <div class="input-group">
+                                                    @Html.EditorFor(model => model.StoreOrdersDeliveryOpenFareKilometers, new { htmlAttributes = new { @class = "form-control valid", required = true } })
+                                                    @Html.ValidationMessageFor(d => d.StoreOrdersDeliveryOpenFareKilometers, "", new { @class = "text-danger" })
+
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <label for="StoreOrdersDeliveryEveryKilometerPrice" class="col-sm-5 control-label required">تكلفة كل كيلو زيادة:</label>
+                                                <div class="input-group" dir="ltr">
+                                                    @Html.EditorFor(model => model.StoreOrdersDeliveryEveryKilometerPrice, new { htmlAttributes = new { @class = "form-control valid", required = true } })
+                                                    @Html.ValidationMessageFor(d => d.StoreOrdersDeliveryEveryKilometerPrice, "", new { @class = "text-danger" })
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin:10px;">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-12 control-label required" for="Latitude">Latitude:</label>
+                                            @Html.TextBoxFor(s => s.Latitude, new { @class = "form-control", required = true, type = "number", step = "any" })
+                                            @Html.ValidationMessageFor(d => d.Latitude, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-12 control-label required" for="Longitude">Longitude:</label>
+                                            @Html.TextBoxFor(s => s.Longitude, new { @class = "form-control", required = true, type = "number", step = "any" })
+                                            @Html.ValidationMessageFor(d => d.Longitude, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-success">اضافه المنجر</button>
+                                }
+                            </div>
+                        </div>
+            </div>
+        </div>
+        <div>
+            @Html.ActionLink("العودة إلى المتاجر الحالية", "Index", null, new { @class = "btn btn-default" })
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $('.datetimepicker-input').datetimepicker({
+                format: 'LT',
+            });
+
+            $("#Is24HourOpen").change(function () {
+                if ($(this).is(":checked")) {
+                    $("#To").attr("disabled", true)
+                    $("#From").attr("disabled", true)
+                }
+                else {
+                    $("#To").attr("disabled", false)
+                    $("#From").attr("disabled", false)
+                }
+            });
+            $("#ValueAddedTax").change(function () {
+                if ($(this).is(":checked")) {
+                    $("#Tax").css("display", "block");
+                } else {
+                    $("#Tax").css("display", "none");
+                }
+            });
+            $("#ValueAddedTax").trigger("change");
+            $("#Is24HourOpen").trigger("change");
+            $("#DeliveryBySystem").change(function () {
+                if ($(this).is(":checked")) {
+                    $("#StoreOrdersDeliveryEveryKilometerPrice").attr("disabled", true)
+                    $("#StoreOrdersDeliveryOpenFareKilometers").attr("disabled", true)
+                    $("#StoreOrdersDeliveryOpenFarePrice").attr("disabled", true)
+                }
+                else {
+                    $("#StoreOrdersDeliveryEveryKilometerPrice").attr("disabled", false)
+                    $("#StoreOrdersDeliveryOpenFareKilometers").attr("disabled", false)
+                    $("#StoreOrdersDeliveryOpenFarePrice").attr("disabled", false)
+                }
+            })
+
+            $("#DeliveryBySystem").trigger("change");
+            $("#CityId").change(function () {
+                var Id = $(this).val();
+                var List = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Cities.Select(x => new { x.Id, x.Country.CurrencyAr})));
+                let obj = List.find(o => o.Id == Id);
+                if (obj != null && obj != undefined) {
+                    $(".price-addon").text(obj.CurrencyAr);
+                }
+            })
+
+            $("#CityId").trigger("change");
+        })
+    </script>
+
+    <script>
+        "use strict";
+        function initAutocomplete() {
+            const map = new google.maps.Map(document.getElementById("map"), {
+                center: {
+                    lat: 24.615438,
+                    lng: 46.545779
+                },
+                zoom: 7,
+                mapTypeId: "roadmap"
+            }); // Create the search box and link it to the UI element.
+
+            const input = document.getElementById("pac-input");
+            const searchBox = new google.maps.places.SearchBox(input);
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input); // Bias the SearchBox results towards current map's viewport.
+
+            map.addListener("bounds_changed", () => {
+                searchBox.setBounds(map.getBounds());
+            });
+            let marker;
+            searchBox.addListener("places_changed", () => {
+                const places = searchBox.getPlaces();
+
+                if (places.length == 0) {
+                    return;
+                }
+                const bounds = new google.maps.LatLngBounds();
+                places.forEach(place => {
+                    if (!place.geometry) {
+                        console.log("Returned place contains no geometry");
+                        return;
+                    }
+                    marker = new google.maps.Marker({
+                        map,
+                        title: place.name,
+                        position: place.geometry.location,
+                        draggable: true
+                    });
+
+                    google.maps.event.addListener(marker, 'dragend', (function (marker) {
+                        return function () {
+                            $("#Latitude").val(marker.getPosition().lat());
+                            $("#Longitude").val(marker.getPosition().lng());
+                        }
+                    })(marker));
+
+                    $("#Latitude").val(marker.getPosition().lat());
+                    $("#Longitude").val(marker.getPosition().lng());
+                    if (place.geometry.viewport) {
+                        // Only geocodes have viewport.
+                        bounds.union(place.geometry.viewport);
+                    } else {
+                        bounds.extend(place.geometry.location);
+                    }
+                });
+                map.fitBounds(bounds);
+            });
+        }
+    </script>
+}

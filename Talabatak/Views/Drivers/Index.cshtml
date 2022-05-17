@@ -1,0 +1,121 @@
+﻿@model IEnumerable<Talabatak.Models.ViewModels.DriverIndexVM>
+@{
+    ViewBag.Title = "السائقين";
+}
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-fw fa-motorcycle"></i> السائقيين</h3>
+    </div>
+    <div class="panel-body">
+        <div id="accordion" class="panel-group" aria-multiselectable="true" role="tablist">
+            <a href="@Url.Action("Create")" class="btn btn-info"><i class="fa fa-plus"></i> اضافه سائق جديد</a>
+        </div>
+    </div>
+    <div class="table-responsive text-center">
+        <br />
+        <table id="table" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>اسم السائق</th>
+                    <th>رقم الهاتف</th>
+                    <th>عدد الطلبات</th>
+                    <th>عدد الطلبات التي تم تنفيذها</th>
+                    <th>عدد الطلبات التي لم تنفذ</th>
+                    <th>المبالغ المطلوب سدادها</th>
+                    <th>المبالغ التي تم تسديدها</th>
+                    <th class="text-center">الوضع الحالى</th>
+                    <th>التحكم</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrderByDescending(s => s.Driv.CreatedOn))
+                {
+                <tr>
+                    <td>
+                        @item.Driv.User.Name
+                    </td>
+                    <td dir="ltr">
+                        <a href="tel:@Html.DisplayFor(modelItem => item.Driv.User.PhoneNumber)">@Html.DisplayFor(modelItem => item.Driv.User.PhoneNumber)</a>
+                    </td>
+                    <td>
+                        @item.Driv.NumberOfCompletedTrips
+                    </td>
+                    <td>
+                        @(item.Driv.Orders.Where(r=>r.IsDeleted == false &&r.DriverId == item.Driv.Id&& r.Order.Status == Talabatak.Models.Enums.StoreOrderStatus.Finished).Count())
+                    </td>
+                    <td>
+                        @(item.Driv.Orders.Where(r=>r.IsDeleted == false && r.DriverId == item.Driv.Id&& r.Order.Status != Talabatak.Models.Enums.StoreOrderStatus.Finished).Count())
+                    </td>
+                    <td>
+                        @if (item.Driv.User.Wallet > 0)
+                        {
+                            <span>-</span>
+                        }
+                        else
+                        {
+                             <span>@Math.Abs(item.Driv.User.Wallet) @item.Driv.City.Country.CurrencyAr</span>
+                        }
+                    </td>
+                    <td>
+                        @item.Paid
+                    </td>
+                    <td>
+                        @if (item.Driv.IsDeleted == true)
+                        {
+                            <p class="badge bg-red">محذوف</p>
+                        }
+                        else
+                        {
+                            if (item.Driv.IsAccepted.HasValue && item.Driv.IsAccepted.Value == true)
+                            {
+                                if (item.Driv.IsBlocked == true)
+                                {
+                                    <span class="badge" style="background-color:red">موقوف</span>
+                                }
+                                else
+                                {
+                                    if (item.Driv.IsAvailable == false)
+                                    {
+                                        <span class="badge" style="background-color:crimson">معه طلبات</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge" style="background-color:forestgreen">متاح</span>
+                                    }
+                                    if (item.Driv.IsOnline == false)
+                                    {
+                                        <span class="badge" style="background-color:gray">Offline</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge" style="background-color:forestgreen">Online</span>
+                                        <a href="@Url.Action("LogOff", "Drivers", new { DriverId = item.Driv.Id })">تسجيل خروج السائق</a>
+                                    }
+                                }
+                            }
+                            else if (item.Driv.IsAccepted.HasValue && item.Driv.IsAccepted.Value == false)
+                            {
+                                <span class="badge" style="background-color:red">مرفوض</span>
+                            }
+                            else
+                            {
+                                <span class="badge" style="background-color:orange">بانتظار الموافقه</span>
+                            }
+                        }
+                    </td>
+                    <td>
+                        <a href="@Url.Action("Wallet","Users", new { Id = item.Driv.User.Id })">المحفظة </a> |
+                        <a href="@Url.Action("Details", new { DriverId = item.Driv.Id })">التفاصيل </a> |
+                        <a href="@Url.Action("Edit", new { DriverId = item.Driv.Id })">التعديل </a> |
+                        <a href="@Url.Action("ChangePassword", new { DriverId = item.Driv.Id })">تغيير كلمه السر </a> |
+                        <a href="@Url.Action("Control", new { DriverId = item.Driv.Id })">التحكم </a>
+                        @if (item.Driv.User.Latitude != null && item.Driv.User.Longitude != null)
+                        {
+                    <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=@item.Driv.User.Latitude,@item.Driv.User.Longitude" class="btn btn-outline-primary" title="مشاهده السائق على خريطه جوجل">مشاهده السائق على خريطه جوجل</a>}
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

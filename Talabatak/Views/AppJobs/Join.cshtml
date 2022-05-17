@@ -1,0 +1,169 @@
+﻿@model Talabatak.Models.ViewModels.CreateWorkerVM
+@{
+    Layout = null;
+    var Cities = ViewBag.Cities as List<Talabatak.Models.Domains.City>;
+    var Jobs = ViewBag.Jobs as List<Talabatak.Models.Domains.Job>;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>الانضمام إلى عمال شحنة</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--===============================================================================================-->
+    <link href="~/Content/Website/css/bootstrap.min.css" rel="stylesheet" />
+    <!--===============================================================================================-->
+    <link href="~/Content/Website/css/font-awesome.min.css" rel="stylesheet" />
+    <!--===============================================================================================-->
+    <link href="https://fonts.googleapis.com/css?family=Acme&display=swap" rel="stylesheet">
+    <!--===============================================================================================-->
+    <link href="~/Content/Website/DriverPage/main.css" rel="stylesheet" />
+    <!--===============================================================================================-->
+    <link href="~/Content/assets/plugins/select2/select2.min.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="~/Content/assets/imgs/logo.png">
+    <link href="https://fonts.googleapis.com/css?family=Cairo&display=swap" rel="stylesheet">
+    <style>
+        *:not(.fa) {
+            font-family: 'Cairo', sans-serif !important;
+        }
+        .select2 {
+            width: 100% !important;
+            text-align: right;
+        }
+
+        .select2-container--default {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div id="cover-spin"></div>
+    <div class="header-img">
+        <img src="~/Content/Website/images/logo2new3.png" />
+    </div>
+    <div class="container-contact100 text-right" dir="rtl">
+        <div class="wrap-contact100">
+            @using (Html.BeginForm("Join", "AppJobs", FormMethod.Post, new { @class = "validate-form" }))
+            {
+                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                <span class="contact100-form-title">
+                    *من فضلك قم بملئ البيانات التالية وسيقوم احد ممثلينا بالرد على حضراتكم فى أقرب وقت
+                </span>
+
+                <div class="wrap-input100 validate-input" data-validate="مطلوب">
+                    @Html.TextBoxFor(s => s.Name, new { @class = "input100", placeholder = "الاسم" })
+                    <span class="focus-input100"></span>
+                </div>
+                <div class="d-block">
+                    @Html.ValidationMessageFor(s => s.Name, "", new { @class = "text-danger" })
+                </div>
+                <div class="wrap-input100 validate-input" data-validate="مطلوب">
+                    @Html.TextBoxFor(s => s.PhoneNumber, new { @class = "input100", placeholder = "رقم الهاتف", type = "number", step = "1", onKeyPress = "if(this.value.length==11) return false;" })
+                    <span class="focus-input100"></span>
+                </div>
+                <div class="d-block">
+                    @Html.ValidationMessageFor(s => s.PhoneNumber, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="wrap-input100 validate-input" data-validate="مطلوب">
+                    @Html.TextBoxFor(s => s.Email, new { @class = "input100", placeholder = "البريد الالكترونى", type = "email" })
+                    <span class="focus-input100"></span>
+                </div>
+                <div class="d-block">
+                    @Html.ValidationMessageFor(s => s.Email, "", new { @class = "text-danger" })
+                </div>
+                <label for="CityId">المدينة</label>
+                <div class="wrap-input100">
+                    <select class="input100 form-control" required style="height:62px;" name="CityId" id="CityId">
+                        @foreach (var city in Cities.OrderBy(w => w.Country.NameAr).ThenBy(w => w.NameAr))
+                        {
+                            <option value="@city.Id" @(Model != null && Model.CityId == city.Id ? "selected" : "")>@city.NameAr - @city.Country.NameAr</option>
+                        }
+                    </select>
+                </div>
+                <div class="d-block">
+                    @Html.ValidationMessageFor(s => s.CityId, "", new { @class = "text-danger" })
+                </div>
+
+                <label for="JobIds">الوظائف المطلوب الانضمام اليها</label>
+                <div class="wrap-input100">
+                    <select class="input100 form-control select2" required style="height:62px;" name="JobIds" id="JobIds" multiple>
+                        @foreach (var job in Jobs.OrderBy(w => w.NameAr))
+                        {
+                            <option value="@job.Id" @(Model != null && Model.JobIds != null && Model.JobIds.Any(s => s == job.Id) ? "selected" : "")>@job.NameAr</option>
+                        }
+                    </select>
+                </div>
+                <div class="d-block">
+                    @Html.ValidationMessageFor(s => s.JobIds, "", new { @class = "text-danger" })
+                </div>
+
+                <label for="PersonalPhoto">الصوره الشحصية</label>
+                <div class="wrap-input100">
+                    <input class="input100 img-input" accept="image/*" id="PersonalPhoto" type="file" name="PersonalPhoto" />
+                    <span class="focus-input100"></span>
+                </div>
+                <div class="d-block">
+                    @Html.ValidationMessageFor(s => s.PersonalPhoto, "", new { @class = "text-danger" })
+                </div>
+                <label for="IdentityPhoto">صوره البطاقة الشخصية</label>
+                <div class="wrap-input100">
+                    <input class="input100 img-input" accept="image/*" id="IdentityPhoto" type="file" name="IdentityPhoto" />
+                    <span class="focus-input100"></span>
+                </div>
+                <div class="d-block">
+                    @Html.ValidationMessageFor(s => s.IdentityPhoto, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="wrap-input100 validate-input" data-validate="مطلوب">
+                    @Html.TextBoxFor(s => s.Password, new { @class = "input100", placeholder = "كلمه السر", type = "password" })
+                    <span class="focus-input100"></span>
+                </div>
+                <div class="d-block">
+                    @Html.ValidationMessageFor(s => s.Password, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="wrap-input100 validate-input" data-validate="مطلوب">
+                    @Html.TextBoxFor(s => s.ConfirmPassword, new { @class = "input100", placeholder = "تأكيد كلمه السر", type = "password" })
+                    <span class="focus-input100"></span>
+                </div>
+                <div class="d-block">
+                    @Html.ValidationMessageFor(s => s.ConfirmPassword, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="container-contact100-form-btn">
+                    <button class="contact100-form-btn" style="background-color: #F16E73">
+                        <span>
+                            إرسال
+                            <i class="fa fa-paper-plane-o m-r-6" aria-hidden="true"></i>
+                        </span>
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="my-progress-bar"></div>
+
+    <!--===============================================================================================-->
+    <script src="~/Content/Website/js/jquery-3.2.1.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/Content/Website/js/popper.js"></script>
+    <script src="~/Content/Website/js/bootstrap.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <!--===============================================================================================-->
+    <script src="~/Content/Website/DriverPage/plugin.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/Content/Website/DriverPage/main.js"></script>
+    <script src="~/Content/assets/plugins/select2/select2.full.js"></script>
+    <script>
+        $(function () {
+            $('.select2').select2({
+                placeholder: 'اضغط للاختيار المتعدد',
+            });
+        })
+    </script>
+    @Scripts.Render("~/bundles/jqueryval")
+</body>
+</html>
+

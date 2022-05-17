@@ -1,0 +1,232 @@
+﻿@model Talabatak.Models.Domains.Store
+@{
+    ViewBag.Title = "تفاصيل " + Model.NameAr;
+    var CreatedOn = TimeZoneInfo.ConvertTimeFromUtc(Model.CreatedOn, TimeZoneInfo.FindSystemTimeZoneById("Sudan Standard Time"));
+}
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-fw fa-plus"></i> @ViewBag.Title</h3>
+    </div>
+    <div class="panel-body">
+        <div id="accordion" class="panel-group" aria-multiselectable="true" role="tablist">
+            <div class="panel panel-success">
+                <div id="collapseOne" class="panel-collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        <div class="row text-center">
+                            <div class="col-12">
+                                @if (!string.IsNullOrEmpty(Model.LogoImageUrl))
+                                {
+                                    <a target="_blank" href="~/Content/Images/Stores/@Model.LogoImageUrl"><img loading="lazy" src="~/Content/Images/Stores/@Model.LogoImageUrl" width="200" height="200" class="img-circle" /></a>
+                                }
+                                else
+                                {
+                                    <img width="200" height="200" class="img-circle" loading="lazy" src="~/Content/assets/imgs/doesnotexist.png" />
+                                }
+                                <br />
+                                <h3 class="mt-10">@Model.NameAr - @Model.NameEn</h3>
+                                <h3 class="mt-10">
+                                    @if (Model.IsAccepted.HasValue && Model.IsAccepted.Value == true)
+                                    {
+                                        <span class="badge" style="background-color:forestgreen">مقبول</span>
+                                    }
+                                    else if (Model.IsAccepted.HasValue && Model.IsAccepted.Value == false)
+                                    {
+                                        <span class="badge" style="background-color:red">مرفوض</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge" style="background-color:orange">بانتظار الموافقه</span>
+                                    }
+                                    @if (Model.IsAccepted.HasValue && Model.IsAccepted.Value == true)
+                                    {
+                                        if (Model.IsDeleted == true)
+                                        {
+                                            <span class="badge" style="background-color:red">محذوف</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge" style="background-color:forestgreen">غير محذوف</span>
+                                        }
+                                    }
+                                    @if (Model.IsAccepted.HasValue && Model.IsAccepted.Value == true)
+                                    {
+                                        if (Model.IsBlocked == true)
+                                        {
+                                            <span class="badge" style="background-color:red">موقوف</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge" style="background-color:forestgreen">نشط</span>
+                                        }
+                                    }
+                                    @if (Model.IsAccepted.HasValue && Model.IsAccepted.Value == true)
+                                    {
+                                        if (Model.IsHidden == true)
+                                        {
+                                            <span class="badge" style="background-color:red">غير مرئى</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge" style="background-color:forestgreen">مرئى</span>
+                                        }
+                                    }
+                                     @if (Model.ValueAddedTax) 
+                                    { 
+                                <span class="badge" style="background-color:darkslategrey">مسجلة في ضريبة القيمة المضافة</span>
+                                    }
+                                </h3>
+                                <h3><a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-primary">التعديل</a> | <a href="@Url.Action("Control", "Stores", new { id = Model.Id })" class="btn btn-primary">التحكم</a> | <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#reportsModal">التقارير</button></h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-success">
+                <div id="collapseOne" class="panel-collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="container">
+                                <div class="col-12 mb-25">
+                                    <h3 class="text-right text-info">&bull; بيانات المنجر</h3>
+                                </div>
+                                <div class="col-12 pr-20">
+                                   
+                                    
+                                    @if (!string.IsNullOrEmpty(Model.TaxReportNumber))
+                                    {<p><b class="fs-17">رقم السجل التجاري:</b> @Model.TaxReportNumber</p>}
+                                    @if (!string.IsNullOrEmpty(Model.TaxReportImageUrl))
+                                    {
+                                <p><b class="fs-17">صور السجل التجاري:</b><a target="_blank" href="~/Content/Images/Stores/@Model.TaxReportImageUrl"> اضغط للمشاهدة</a></p>}
+                                    @if (!string.IsNullOrEmpty(Model.TaxImageUrl))
+                                    {
+                                <p><b class="fs-17">صور الضريبة:</b><a target="_blank" href="~/Content/Images/Stores/@Model.TaxImageUrl"> اضغط للمشاهدة</p>}
+                                    @if (!string.IsNullOrEmpty(Model.ValueAddedTaxImageUrl))
+                                    {
+                                <p><b class="fs-17">صور ضريبة القيمة المضافة:</b><a target="_blank" href="~/Content/Images/Stores/@Model.ValueAddedTaxImageUrl"> اضغط للمشاهدة</a></p>}
+                                    <p><b class="fs-17">القسم:</b> @Model.Category.NameAr</p>
+                                    <p><b class="fs-17">المدينة:</b> @Model.City.NameAr - @Model.City.Country.NameAr</p>
+                                    <p><b class="fs-17">القسم:</b> @Model.Category.NameAr</p>
+                                    <p><b class="fs-17">الرقم:</b> <a href="tel:@Model.PhoneNumber">@Model.PhoneNumber</a></p>
+                                    @if (!string.IsNullOrEmpty(Model.DescriptionAr))
+                                    {
+                                <p><b class="fs-17">الوصف بالعربى:</b> @Html.Raw(Model.DescriptionAr.Replace("\r\n", "<br />"))</p>}
+                                    @if (!string.IsNullOrEmpty(Model.DescriptionEn))
+                                    {
+                                <p><b class="fs-17">الوصف بالانجليزى:</b> @Html.Raw(Model.DescriptionEn.Replace("\r\n", "<br />"))</p>}
+                                    <p><b class="fs-17">تاريخ التسجيل:</b> <span dir="auto">@CreatedOn.ToString("dd MMMM yyyy hh:mm tt")</span></p>
+                                    @if (Model.IsAccepted.HasValue)
+                                    {
+                                        if (Model.IsAccepted.HasValue && Model.IsAccepted.Value == true)
+                                        {
+                                            var AcceptedOn = TimeZoneInfo.ConvertTimeFromUtc(Model.AcceptedOn.Value, TimeZoneInfo.FindSystemTimeZoneById("Sudan Standard Time"));
+                                <p><b class="fs-17">تاريخ القبول:</b> <span dir="auto">@AcceptedOn.ToString("dd MMMM yyyy hh:mm tt")</span></p> }
+                            if (Model.IsAccepted.HasValue && Model.IsAccepted.Value == false)
+                            {
+                                var RejectedOn = TimeZoneInfo.ConvertTimeFromUtc(Model.RejectedOn.Value, TimeZoneInfo.FindSystemTimeZoneById("Sudan Standard Time"));
+                                <p><b class="fs-17">تاريخ الرفض:</b> <span dir="auto">@RejectedOn.ToString("dd MMMM yyyy hh:mm tt")</span></p>}
+                        }
+                                    <p>
+                                        <b class="fs-17">مواعيد العمل:</b>
+                                        @(Model.Is24HourOpen ? "يعمل 24 ساعه" : "دوام جزئى")
+                                        @if (Model.Is24HourOpen == false)
+                                        {
+                                            var TimeStart = new DateTime().Add(Model.OpenFrom.Value).ToString("hh:mm tt");
+                                            var TimeEnd = new DateTime().Add(Model.OpenTo.Value).ToString("hh:mm tt");
+                                <span>من الساعه @TimeStart حتى الساعه @TimeEnd</span>}
+                                    </p>
+                                    <b class="fs-17">طريقة التوصيل:</b>
+                                    @if (Model.DeliveryBySystem == true)
+                                    {
+                                <p>
+                                    <span>من خلالنا</span>
+                                </p> }
+                            else
+                            {
+                                <p> <b class="fs-17">سعر فتحت العداد:</b> @Model.StoreOrdersDeliveryOpenFarePrice </p>
+                                                <p> <b class="fs-17">عدد كيلو متر فتحة العداد:</b> @Model.StoreOrdersDeliveryOpenFareKilometers </p>
+                                                                <p> <b class="fs-17">تكلفة كل كيلو زيادة:</b> @Model.StoreOrdersDeliveryEveryKilometerPrice </p>}
+                                    <p>
+                                        @if (Model.Latitude != null && Model.Longitude != null)
+                                        {
+                                <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=@Model.Latitude,@Model.Longitude" class="btn btn-outline-primary" title="مشاهده المنجر على خريطه جوجل">مشاهده المنجر على خريطه جوجل</a>}
+                                    </p>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-success">
+                <div id="collapseOne" class="panel-collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="container">
+                                <div class="col-12 mb-25">
+                                    <h3 class="text-right text-info">&bull; بيانات المسؤولين</h3>
+                                </div>
+                                <div class="col-12 pr-20">
+                                    @if (Model.Owners == null || Model.Owners.Count(s => s.IsDeleted == false) <= 0)
+                                    {
+                                <p>لا يوجد</p> }
+                            else
+                            {
+                                foreach (var Owner in Model.Owners.Where(s => s.IsDeleted == false))
+                                {
+                                <p><b class="fs-17">الاسم:</b> @Owner.User.Name</p>
+                                                    <p><b class="fs-17">رقم الهاتف:</b> <a dir="ltr" href="tel:+@(Owner.User.CityId.HasValue == true ? Owner.User.City.Country.PhoneCode : "")@Owner.User.PhoneNumber">+@(Owner.User.CityId.HasValue == true ? Owner.User.City.Country.PhoneCode : "")@Owner.User.PhoneNumber</a></p>
+                                                                        <p><b class="fs-17">البريد الالكترونى:</b> <a href="mailto:@Owner.User.Email">@Owner.User.Email</a></p> if (!string.IsNullOrEmpty(Owner.User.ImageUrl))
+                                                                        {
+                                                    <p><b class="fs-17">صوره المسؤول:</b> <img width="150" loading="lazy" class="mr-15" src="~/Content/Images/Users/@Owner.User.ImageUrl" /></p> }
+
+                                                         <a class="btn btn-primary" href="@Url.Action("ResetPassword", new { id = Owner.UserId })"> تغيير كلمة السر</a>
+                                                    @*@Html.ActionLink("تغيير كلمة السر", "ResetPassword", new { id = Owner.UserId })*@
+                                                                        <hr />}
+                                                                }
+                                    <hr />
+                                    <a class="btn btn-primary" href="@Url.Action("Users", new { StoreId = Model.Id })">اداره المستخدمين</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <a href="@Url.Action("Index", "Stores")" class="btn btn-default">العودة إلى المتاجر</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- The Modal -->
+<div class="modal" id="reportsModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">التقارير المالية</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                Modal body..
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>

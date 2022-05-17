@@ -1,0 +1,42 @@
+﻿@model PagedList.IPagedList<Talabatak.Models.Domains.Notification>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "الاشعارات";
+}
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-fw fa-shopping-cart"></i> @ViewBag.Title</h3>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>الاشعار</th>
+                        <th>التوقيت</th>
+                    </tr>
+                </thead>
+                <tbody id="table_body">
+                    @foreach (var notification in Model.OrderByDescending(s => s.CreatedOn))
+                    {
+                        <tr>
+                            <td>
+                                <a target="_blank" href="@HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)@notification.NotificationLink">@notification.Title</a>
+                            </td>
+                            @{
+                                var CreatedOn = TimeZoneInfo.ConvertTimeFromUtc(notification.CreatedOn, TimeZoneInfo.FindSystemTimeZoneById("Sudan Standard Time"));
+                            }
+                            <td>@CreatedOn.ToString("dd MMM yyyy")<br />@CreatedOn.ToString("hh:mm tt")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="text-center">
+
+                صفحه @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) من @Model.PageCount
+
+                @Html.PagedListPager(Model, page => Url.Action("All", new { page }))
+            </div>
+        </div>
+    </div>
+</div>

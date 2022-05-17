@@ -1,0 +1,92 @@
+﻿@model  IEnumerable<Talabatak.Models.Domains.OtlobAy7agaOrder>
+@{
+    ViewBag.Title = "طلبات اطلب اى حاجه";
+}
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-fw fa-shopping-cart"></i> @ViewBag.Title</h3>
+        </div>
+        <div class="panel-body">
+            <div class="table-responsive text-center">
+                <table id="table" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th class="text-center">الحاله</th>
+                            <th>رقم الطلب</th>
+                            <th>العميل</th>
+                            <th>التوقيت</th>
+                            <th>السائق</th>
+                            <th>الاجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table_body">
+                        @foreach (var order in Model.OrderByDescending(s => s.CreatedOn))
+                        {
+                            <tr id="order_@order.Id">
+                                <td>
+                                    @switch (order.OrderStatus)
+                                    {
+                                        case Talabatak.Models.Enums.OtlobAy7agaOrderStatus.Cancelled:
+                                            <span class="badge bg-red">تم الغاءه</span>
+                                            break;
+                                        case Talabatak.Models.Enums.OtlobAy7agaOrderStatus.Started:
+                                            <span class="badge bg-blue">جارى التوصيل</span>
+                                            break;
+                                        case Talabatak.Models.Enums.OtlobAy7agaOrderStatus.Finished:
+                                            <span class="badge bg-green">تم التوصيل</span>
+                                            break;
+                                        case Talabatak.Models.Enums.OtlobAy7agaOrderStatus.Placed:
+                                            <span class="badge bg-orange"><i class="fa fa-exclamation-triangle"></i> جديد</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    @order.Code
+                                </td>
+                                <td>
+                                    @if (order.UserAddressId.HasValue == true)
+                                    {
+                                        <p>@order.UserAddress.Name</p>
+                                        <p><a href="tel:@order.UserAddress.PhoneNumber">@order.UserAddress.PhoneNumber</a></p>
+                                    }
+                                    else
+                                    {
+                                        <p>@order.User.Name</p>
+                                        <p><a href="tel:@order.User.PhoneNumber">@order.User.PhoneNumber</a></p>
+                                    }
+                                </td>
+                                @{
+                                    var CreatedOn = TimeZoneInfo.ConvertTimeFromUtc(order.CreatedOn, TimeZoneInfo.FindSystemTimeZoneById("Sudan Standard Time"));
+                                }
+                                <td>@CreatedOn.ToString("dd MMM yyyy")<br />@CreatedOn.ToString("hh:mm tt")</td>
+                                <td>
+                                    @if (order.DriverId.HasValue == true)
+                                    {
+                                        <p>@order.Driver.User.Name</p>
+                                        <p><a href="tel:@order.Driver.User.PhoneNumber">@order.Driver.User.PhoneNumber</a></p>
+                                    }
+                                    else
+                                    {
+                                        <p>بدون</p>
+                                    }
+                                    <p>كود الانهاء: @order.FinishCode</p>
+                                </td>
+                                <td>
+                                    <a class="btn  btn-sm btn-primary" style="margin-bottom:10px" href="@Url.Action("ChangeDriver", new { OrderId = order.Id, ReturnUrl = Request.Url })"> تغير السائق</a>
+                                    <a class="btn btn-sm btn-info" style="margin-bottom:10px" href="@Url.Action("Details", new { OrderId = order.Id, ReturnUrl = Request.Url })">التفاصيل</a>
+                                    <a class="btn btn-sm btn-default" style="margin-bottom:10px" href="@Url.Action("Chat", new { OrderId = order.Id, ReturnUrl = Request.Url })"><i class="fa fa-comments"></i> المحادثات</a>
+                                    @if (order.OrderStatus != Talabatak.Models.Enums.OtlobAy7agaOrderStatus.Finished && order.OrderStatus != Talabatak.Models.Enums.OtlobAy7agaOrderStatus.Cancelled)
+                                    {
+
+                                        <a class="btn btn-sm btn-success" style="margin-bottom:10px" href="@Url.Action("Finshed", new { OrderId = order.Id, ReturnUrl = Request.Url })"><i class="fa fa-check-circle"></i> انهاء الطلب</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+                      
+                   

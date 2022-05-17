@@ -1,0 +1,116 @@
+﻿@model IEnumerable<Talabatak.Models.Domains.Worker>
+@{
+    var Job = ViewBag.Job as Talabatak.Models.Domains.Job;
+    if (Job != null)
+    {
+        ViewBag.Title = "عمال " + Job.NameAr;
+    }
+    else
+    {
+        ViewBag.Title = "العمال";
+    }
+}
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-fw fa-users"></i> @ViewBag.Title</h3>
+    </div>
+    <div class="panel-body">
+        @if (Job != null)
+        {
+            <h3 class="text-center">@ViewBag.Title</h3>
+            <br />
+        }
+            <div id="accordion" class="panel-group" aria-multiselectable="true" role="tablist">
+                @if (Job != null)
+                {
+                    <a href="@Url.Action("CreateWorker", new { JobId = Job.Id })" class="btn btn-info"><i class="fa fa-plus"></i> اضافه عامل جديد</a>
+                }
+                else
+                {
+                    <a href="@Url.Action("CreateWorker")" class="btn btn-info"><i class="fa fa-plus"></i> اضافه عامل جديد</a>
+                }
+            </div>
+    </div>
+    <div class="table-responsive text-center">
+        <br />
+        <table id="table" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>الاسم</th>
+                    <th>رقم الهاتف</th>
+                    <th>عدد الطلبات</th>
+                    <th class="text-center">الوضع الحالى</th>
+                    <th>الوظائف</th>
+                    <th>التحكم</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrderByDescending(s => s.CreatedOn))
+                {
+                    <tr>
+                        <td>
+                            @item.User.Name
+                        </td>
+                        <td dir="ltr">
+                            <a href="tel:@Html.DisplayFor(modelItem => item.User.PhoneNumber)">@Html.DisplayFor(modelItem => item.User.PhoneNumber)</a>
+                        </td>
+                        <td>
+                            @item.NumberOfOrders
+                        </td>
+                        <td>
+                            @if (item.IsDeleted == true)
+                            {
+                                <p class="badge bg-red">محذوف</p>
+                            }
+                            else
+                            {
+                                if (item.IsAccepted.HasValue && item.IsAccepted.Value == true)
+                                {
+                                    if (item.IsBlocked == true)
+                                    {
+                                        <span class="badge" style="background-color:red">موقوف</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge" style="background-color:forestgreen">متاح</span>
+                                    }
+                                }
+                                else if (item.IsAccepted.HasValue && item.IsAccepted.Value == false)
+                                {
+                                    <span class="badge" style="background-color:red">مرفوض</span>
+                                }
+                                else
+                                {
+                                    <span class="badge" style="background-color:orange">بانتظار الموافقه</span>
+                                }
+                            }
+                        </td>
+                        <td>
+                            @if (item.Jobs != null && item.Jobs.Count(w => w.IsDeleted == false) > 0)
+                            {
+                                foreach (var job in item.Jobs.Where(s => s.IsDeleted == false))
+                                {
+                                    <p>@job.Job.NameAr</p>
+                                }
+                            }
+                            else
+                            {
+                                <p>غير مشترك فى اى وظيفه</p>
+                            }
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Wallet","Users", new { Id = item.User.Id })">المحفظة </a> |
+                            <a href="@Url.Action("WorkerJobs", new { WorkerId = item.Id })">الوظائف </a> |
+                            <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=@item.User.Latitude,@item.User.Longitude" class="btn btn-outline-primary" title="مشاهده السائق على خريطه جوجل">مشاهده السائق على خريطه جوجل</a>}
+                            |<a href="@Url.Action("WorkerDetails", new { WorkerId = item.Id })">التفاصيل </a> |
+                            <a href="@Url.Action("EditWorker", new { WorkerId = item.Id })">التعديل </a> |
+                            <a href="@Url.Action("ChangeWorkerPassword", new { WorkerId = item.Id })">تغيير كلمه السر </a> |
+                            <a href="@Url.Action("Control", new { WorkerId = item.Id })">التحكم </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

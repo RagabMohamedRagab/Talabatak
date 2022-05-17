@@ -1,0 +1,161 @@
+﻿@model Talabatak.Models.ViewModels.SliderVM
+@{
+    ViewBag.Title = "صور الواجهة الاضافية";
+    var Sliders = ViewBag.Sliders as List<Talabatak.Models.Domains.SecondSlider>;
+}
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title text-center"><i class="fa fa-fw fa-shopping-bag"></i> صور الواجهة الاضافية</h3>
+    </div>
+    <div class="panel-body">
+        <div id="accordion" class="panel-group" aria-multiselectable="true" role="tablist">
+            <div class="panel panel-success">
+                <div class="panel-heading collapsed" role="tab" id="headingOne" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <h4 class="panel-title">
+                        <a><i class="fa fa-fw fa-plus"></i> إضافة صورة جديدة</a>
+                    </h4>
+                </div>
+
+                <div id="collapseOne" class="panel-collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        @using (Html.BeginForm("UploadImage", "SecondSlider", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            @Html.AntiForgeryToken()
+                        <div class="row" style="margin:10px;">
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label for="NameAr" class="col-sm-5 control-label required">إدراج صورة </label>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" type="file" required name="Image" id="Image" accept="image/*" value="@Model.Image" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label for="NameAr" class="col-sm-5 control-label required">المتجر </label>
+                                    <div class="col-sm-7">
+                                        @Html.DropDownListFor(x => x.StoreId, ViewBag.Stores as SelectList, "اختر المتجر", new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(w => w.StoreId, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label for="NameEn" class="col-sm-5 control-label required">ترتيب الصورة</label>
+                                    <div class="col-sm-7">
+                                        @Html.EditorFor(model => model.SortedNumber, new { htmlAttributes = new { @class = "form-control valid", required = true } })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                            <button type="submit" class="btn btn-success" style="text-align:center; justify-content:center;">إضافة</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table id="table" cellpadding="0" cellspacing="0" border="0" class="table text-center table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>الترتيب</th>
+                        <th>الصورة</th>
+                        <th>المتجر</th>
+                        <th>الحذف</th>
+                        <th>التحكم</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Sliders)
+                    {
+                        <tr>
+                            <td id="sort_number_@item.Id">@item.SortingNumber</td>
+                            <td>
+                             <img src="@Url.Content(item.ImagePath != null ? ("~/Content/Images/Slider/"+ item.ImagePath) : "~/Content/assets/imgs/unnamed.jpg")" width="150" height="50" />
+                            </td>
+                            <td>
+                                @if (item.Store != null)
+                                {
+                                    @Html.DisplayFor(modelItem => item.Store.NameAr)
+                                }
+                                else
+                                {
+                                    <span class="badge" style="background-color:red">بدون</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.IsDeleted == true)
+                                {
+                                    <span class="badge" style="background-color:red">محذوف</span>
+                                }
+                                else
+                                {
+                                    <span class="badge" style="background-color:forestgreen">غير محذوف</span>
+                                }
+                            </td>
+                            <td>
+                                <button style="margin-bottom:10px" type="button" id="change-sorting-btn_@item.Id" onclick="ChangeSortingNumber('@item.Id','@item.SortingNumber')">تغير الترتيب</button> |
+                                @Html.ActionLink("تعديل", "Edit", new { id = item.Id }) |
+                                 <a id="Delete_@item.Id" onclick="Delete('@item.Id')" style="cursor:pointer;">مسح</a> 
+
+                               
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function ChangeSortingNumber(Id, oldNumber) {
+            var newNumber = parseInt(window.prompt("قم بكتابه الترتيب الجديد", oldNumber));
+            if (/^[0-9.,]+$/.test(newNumber) == true) {
+                $("#cover-spin").show();
+                $.ajax({
+                    url: "@Url.Action("SetSortingNumber", "SecondSlider")",
+                    type: "POST",
+                    data: { StoreId: Id, Number: newNumber },
+                    success: function (results) {
+                        if (results.Success == true) {
+                            $("#sort_number_" + Id).text(newNumber);
+                            $("#change-sorting-btn_" + Id).attr("onclick", "ChangeSortingNumber(" + Id + "," + newNumber +")");
+                            toastr.success("تم تحديث الترتيب بنجاح");
+                        }
+                        else {
+                            toastr.error(results.Message);
+                        }
+                        $("#cover-spin").hide();
+                    }
+                })
+            }
+        }
+
+
+
+        function Delete(ImgId)
+        {
+           
+            $.ajax({
+                   
+                    url: "@Url.Action("DeleteImage", "SecondSlider")",
+                type: "POST",
+                data: { ImageId: ImgId },
+                    success: function (results) {
+                        if (results.Success == true) {
+                            toastr.success("تم المسح بنجاح");
+                            location.reload();
+                        }
+                        else {
+                            toastr.error(results.Message);
+                        }
+                        $("#cover-spin").hide();
+                    }
+                })
+        }
+    </script>
+}

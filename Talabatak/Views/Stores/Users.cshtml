@@ -1,0 +1,64 @@
+﻿@model Talabatak.Models.Domains.Store
+@{
+    ViewBag.Title = "مستخدمى " + Model.NameAr;
+}
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title text-center"><i class="fa fa-fw fa-users"></i> @ViewBag.Title</h3>
+    </div>
+    <div class="panel-body">
+        <a class="btn btn-default" href="@Url.Action("Index", "Stores")">العودة</a>
+        <a class="btn btn-success" href="@Url.Action("CreateUser", new { StoreId = Model.Id })"><i class="fa fa-plus"></i> اضافه مستخدم جديد</a>
+        <br />
+        <br />
+        <div class="table-responsive">
+            <table id="table" cellpadding="0" cellspacing="0" border="0" class="table text-center table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>الحاله</th>
+                        <th>الاسم</th>
+                        <th>البريد</th>
+                        <th>المدينة</th>
+                        <th>رقم الهاتف</th>
+                        <th>التحكم</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Owners.OrderByDescending(d => d.CreatedOn))
+                    {
+                        <tr>
+                            <td>
+                                @if (item.IsDeleted == true)
+                                {
+                                    <span class="badge bg-red">محذوف</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-green">نشط</span>
+                                }
+                            </td>
+                            <td>
+                                @item.User.Name
+                            </td>
+                            <td>
+                                <a href="mailto:@item.User.Email">@item.User.Email</a>
+                            </td>
+                            <td>
+                                @if (item.User.CityId.HasValue == true)
+                                {
+                                    <p>@item.User.City.NameAr - @item.User.City.Country.NameAr</p>
+                                }
+                            </td>
+                            <td>
+                                <a href="tel:+@(item.User.CityId.HasValue == true ? item.User.City.Country.PhoneCode : "")@item.User.PhoneNumber">@item.User.PhoneNumber</a>
+                            </td>
+                            <td>
+                                @Html.ActionLink(item.IsDeleted == true ? "استعادة" : "حذف", "ToggleDeleteUser", new { Id = item.Id })
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

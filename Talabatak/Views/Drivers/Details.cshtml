@@ -1,0 +1,190 @@
+﻿@model Talabatak.Models.Domains.Driver
+@{
+    ViewBag.Title = "تفاصيل السائق " + Model.User.Name;
+    var CreatedOn = TimeZoneInfo.ConvertTimeFromUtc(Model.CreatedOn, TimeZoneInfo.FindSystemTimeZoneById("Sudan Standard Time"));
+}
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-fw fa-plus"></i> @ViewBag.Title</h3>
+    </div>
+    <div class="panel-body">
+        <div id="accordion" class="panel-group" aria-multiselectable="true" role="tablist">
+            <div class="panel panel-success">
+                <div id="collapseOne" class="panel-collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        <div class="row text-center">
+                            <div class="col-12">
+                                @if (!string.IsNullOrEmpty(Model.User.ImageUrl))
+                                {
+                                    <a target="_blank" href="~/Content/Images/Users/@Model.User.ImageUrl"><img loading="lazy" src="~/Content/Images/Users/@Model.User.ImageUrl" width="200" height="200" class="img-circle" /></a>
+                                }
+                                else
+                                {
+                                    <img width="200" height="200" class="img-circle" loading="lazy" src="~/Content/assets/imgs/doesnotexist.png" />
+                                }
+                                <br />
+                                <h3 class="mt-10">@Model.User.Name</h3>
+                                <h3 class="mt-10">
+                                    @if (Model.IsDeleted == true)
+                                    {
+                                        <span class="badge bg-red">محذوف</span>
+                                    }
+                                    else
+                                    {
+                                        if (Model.IsAccepted.HasValue && Model.IsAccepted.Value == true)
+                                        {
+                                            if (Model.IsBlocked == true)
+                                            {
+                                                <span class="badge" style="background-color:red">موقوف</span>
+                                            }
+                                            else
+                                            {
+                                                if (Model.IsAvailable == false)
+                                                {
+                                                    <span class="badge" style="background-color:crimson">معه طلبات</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge" style="background-color:forestgreen">متاح</span>
+                                                }
+                                                if (Model.IsOnline == false)
+                                                {
+                                                    <span class="badge" style="background-color:gray">Offline</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge" style="background-color:forestgreen">Online</span>
+                                                    <a href="@Url.Action("LogOff", "Drivers", new { DriverId = Model.Id })">تسجيل خروج السائق</a>
+                                                }
+                                            }
+                                        }
+                                        else if (Model.IsAccepted.HasValue && Model.IsAccepted.Value == false)
+                                        {
+                                            <span class="badge" style="background-color:red">مرفوض</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge" style="background-color:orange">بانتظار الموافقه</span>
+                                        }
+                                    }
+                                </h3>
+                                <h3><a href="@Url.Action("Edit", new { DriverId = Model.Id })" class="btn btn-primary">التعديل</a> | <a href="@Url.Action("Control", "Drivers", new { DriverId = Model.Id })" class="btn btn-primary">التحكم</a> | <a href="@Url.Action("ChangePassword", "Drivers", new { DriverId = Model.Id })" class="btn btn-primary">تغيير كلمه السر</a></h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-success">
+                <div id="collapseOne" class="panel-collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="container">
+                                <div class="col-12 mb-25">
+                                    <h3 class="text-right text-info">&bull; بيانات السائق</h3>
+                                </div>
+                                <div class="col-12 pr-20">
+                                    <p><b class="fs-17">المدينه:</b> @(Model.User.CityId.HasValue == true ? Model.User.City.NameAr : "---")</p>
+                                    <p><b class="fs-17">الدولة:</b> @(Model.User.CityId.HasValue == true ? Model.User.City.Country.NameAr : "---")</p>
+                                    <p><b class="fs-17">رقم الهاتف:</b> <a dir="ltr" href="tel:+@(Model.User.CityId.HasValue == true ? Model.User.City.Country.PhoneCode : "")@Model.User.PhoneNumber">@Model.User.PhoneNumber</a></p>
+                                    @*<p><b class="fs-17">البريد الالكترونى:</b> <a href="mailto:@Model.User.Email">@Model.User.Email</a></p>*@
+                                </div>
+
+                                <div class="col-12 mb-25">
+                                    <h3 class="text-right text-info">&bull; الوثائق والمستندات</h3>
+                                </div>
+                                <div class="col-12 pr-20">
+                                    <p>
+                                        <b class="fs-17">نوع الدراجة:</b>
+                                        @if (Model.VehicleTypeId.HasValue == true)
+                                        {
+                                            <span>@Model.VehicleType.Name</span>
+                                        }
+                                        else
+                                        {
+                                            <span>---</span>
+                                        }
+                                    </p>
+
+                                    <p>
+                                        <b class="fs-17">لون المركبة:</b>
+                                        @if (Model.VehicleColor != null)
+                                        {
+                                            <span style="background-color:@Model.VehicleColor">@Model.VehicleColor</span>
+                                        }
+                                        else
+                                        {
+                                            <span>---</span>
+                                        }
+                                    </p>
+                                    <p>
+                                        <b class="fs-17">رقم رخصه المركبة:</b>
+                                        @if (Model.VehicleNumber != null)
+                                        {
+                                            <span>@Model.VehicleNumber</span>
+                                        }
+                                        else
+                                        {
+                                            <span>---</span>
+                                        }
+                                    </p>
+                                    <p>
+                                        <b class="fs-17">صوره رخصه السائق (اضغط على الصوره للتكبير):</b>
+                                        @if (Model.LicensePhoto != null)
+                                        {
+                                            <a href="~/Content/Images/Users/@Model.LicensePhoto" target="_blank"><img loading="lazy" src="~/Content/Images/Users/@Model.LicensePhoto" width="200" /></a>
+                                        }
+                                        else
+                                        {
+                                            <span>لا يوجد</span>
+                                        }
+                                    </p>
+                                    <p>
+                                        <b class="fs-17">صوره السائق الشخصية (اضغط على الصوره للتكبير):</b>
+                                        @if (Model.PersonalPhoto != null)
+                                        {
+                                            <a href="~/Content/Images/Users/@Model.PersonalPhoto" target="_blank"><img loading="lazy" src="~/Content/Images/Users/@Model.PersonalPhoto" width="200" /></a>
+                                        }
+                                        else
+                                        {
+                                            <span>لا يوجد</span>
+                                        }
+                                    </p>
+                                    <p>
+                                        <b class="fs-17">صوره هوية السائق (اضغط على الصوره للتكبير):</b>
+                                        @if (Model.IdentityPhoto != null)
+                                        {
+                                            <a href="~/Content/Images/Users/@Model.IdentityPhoto" target="_blank"><img loading="lazy" src="~/Content/Images/Users/@Model.IdentityPhoto" width="200" /></a>
+                                        }
+                                        else
+                                        {
+                                            <span>لا يوجد</span>
+                                        }
+                                    </p>
+                                    <p>
+                                        <b class="fs-17">صوره رخصة المركبة (اضغط على الصوره للتكبير):</b>
+                                        @if (Model.VehicleLicensePhoto != null)
+                                        {
+                                            <a href="~/Content/Images/Users/@Model.VehicleLicensePhoto" target="_blank"><img loading="lazy" src="~/Content/Images/Users/@Model.VehicleLicensePhoto" width="200" /></a>
+                                        }
+                                        else
+                                        {
+                                            <span>لا يوجد</span>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <a href="@Url.Action("Index", "Drivers")" class="btn btn-default">العودة إلى السائقين</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

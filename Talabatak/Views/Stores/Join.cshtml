@@ -1,0 +1,458 @@
+﻿@model Talabatak.Models.ViewModels.CreateStoreVM
+@{
+    Layout = null;
+    ViewBag.Title = "الانضمام الى تطبيق  شحنة";
+    var Cities = ViewBag.Cities as List<Talabatak.Models.Domains.City>;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>الانضمام الى  شحنة</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--===============================================================================================-->
+    <link rel="icon" type="image/png" href="~/Content/assets/imgs/logo.png">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Content/storejoin/vendor/bootstrap/css/bootstrap.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Content/storejoin/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Content/storejoin/fonts/iconic/css/material-design-iconic-font.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Content/storejoin/vendor/animate/animate.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Content/storejoin/vendor/css-hamburgers/hamburgers.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Content/storejoin/vendor/animsition/css/animsition.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" href="~/Content/assets/plugins/datepicker/datepicker3.css">
+    <link rel="stylesheet" href="~/Content/assets/plugins/daterangepicker/daterangepicker-bs3.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Content/storejoin/vendor/select2/select2.min.css">
+    <!--===============================================================================================-->
+    @*<link rel="stylesheet" type="text/css" href="~/Content/storejoin/vendor/daterangepicker/daterangepicker.css">*@
+    <!--===============================================================================================-->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600&display=swap" rel="stylesheet">
+    <link href="~/Content/storejoin/css/util.css" rel="stylesheet" />
+    <link href="~/Content/storejoin/css/main.css" rel="stylesheet" />
+    <style>
+        label.required:after {
+            content: " *";
+            color: red;
+        }
+    </style>
+    <style type="text/css">
+        /* Always set the map height explicitly to define the size of the div
+        * element that contains the map. */
+        #map {
+            height: 700px;
+        }
+
+        #description {
+            font-family: Roboto;
+            font-size: 15px;
+            font-weight: 300;
+        }
+
+        #infowindow-content .title {
+            font-weight: bold;
+        }
+
+        #infowindow-content {
+            display: none;
+        }
+
+        #map #infowindow-content {
+            display: inline;
+        }
+
+        .pac-card {
+            margin: 10px 10px 0 0;
+            border-radius: 2px 0 0 2px;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            outline: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            background-color: #fff;
+            font-family: Roboto;
+        }
+
+        #pac-container {
+            padding-bottom: 12px;
+            margin-right: 12px;
+        }
+
+        .pac-controls {
+            display: inline-block;
+            padding: 5px 11px;
+        }
+
+            .pac-controls label {
+                font-family: Roboto;
+                font-size: 13px;
+                font-weight: 300;
+            }
+
+        #pac-input {
+            background-color: #fff;
+            font-family: Roboto;
+            font-size: 15px;
+            font-weight: 300;
+            margin-left: 12px;
+            padding: 0 11px 0 13px;
+            text-overflow: ellipsis;
+            width: 400px;
+        }
+
+            #pac-input:focus {
+                border-color: #4d90fe;
+            }
+
+        #title {
+            color: #fff;
+            background-color: #4d90fe;
+            font-size: 25px;
+            font-weight: 500;
+            padding: 6px 12px;
+        }
+
+        #target {
+            width: 345px;
+        }
+    </style>
+    <!-- =============================================================================================== -->
+</head>
+<body>
+
+
+    <div class="container-contact100" dir="rtl">
+        <div class="wrap-contact100">
+            <div class="contact100-form validate-form">
+                <div class="text-center m-auto">
+                    <img src="~/Content/assets/imgs/logo.png" width="150" />
+                </div>
+                <span style="color: #F16E73" class="contact100-form-title">
+                    الانضمام الى شحنة 
+                    <hr />
+                    <small class="text-danger" style="font-size:17px;">برجاء ملئ البيانات التاليه وسيتم التواصل معكم من احد ممثلى خدمه العملاء</small><br />
+                    <small class="text-info" style="font-size:17px;">جميع الحقول بالعلامه <span class="text-danger">*</span> مطلوبة</small>
+                </span>
+
+                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                <hr />
+                @using (Html.BeginForm("Join", "Stores", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    <input name="Latitude" value="0" hidden />
+                    <input name="Longitude" value="0" hidden />
+                    <h4 class="mb-3 text-info">بيانات المنجر</h4>
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="label-input100 required" for="CityId">المدينة:</label>
+                            <div class="rs1 validate-input">
+                                <select name="CityId" id="CityId" class="form-control select2 h-100" required>
+                                    @foreach (var city in Cities.OrderBy(s => s.Country.NameAr).ThenBy(w => w.NameAr))
+                                    {
+                                        <option value="@city.Id" @(Model != null && Model.CityId == city.Id ? "selected" : "")>@city.NameAr - @city.Country.NameAr</option>
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(d => d.CityId, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="label-input100 required" for="CategoryId">القسم:</label>
+                            <div class="rs1 validate-input">
+                                @Html.DropDownList("CategoryId", null, new { @class = "form-control select2 h-100", required = true })
+                                @Html.ValidationMessageFor(d => d.CategoryId, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <label class="label-input100 required" for="NameAr"> اسم المنجر بالعربى</label>
+                            <div class="wrap-input100 validate-input">
+                                @Html.EditorFor(model => model.NameAr, new { htmlAttributes = new { @class = "form-control input100 valid", required = true } })
+                                @Html.ValidationMessageFor(d => d.NameAr, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="label-input100 required" for="NameEn"> اسم المنجر بالانجليزى</label>
+                            <div class="wrap-input100 validate-input">
+                                @Html.EditorFor(model => model.NameEn, new { htmlAttributes = new { @class = "form-control input100 valid", required = true } })
+                                @Html.ValidationMessageFor(d => d.NameEn, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="label-input100" for="DescriptionAr">نبذه عن المنجر بالعربى:</label>
+                            <div class="wrap-input100">
+                                @Html.TextAreaFor(model => model.DescriptionAr, htmlAttributes: new { @class = "form-control", rows = 4 })
+                                @Html.ValidationMessageFor(d => d.DescriptionAr, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="label-input100" for="DescriptionEn">نبذه عن المنجر بالانجليزى:</label>
+                            <div class="wrap-input100">
+                                @Html.TextAreaFor(model => model.DescriptionEn, htmlAttributes: new { @class = "form-control", rows = 4 })
+                                @Html.ValidationMessageFor(d => d.DescriptionEn, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="label-input100" for="PhoneNumber">رقم هاتف المنجر:</label>
+                            <div class="wrap-input100">
+                                @Html.TextBoxFor(model => model.PhoneNumber, htmlAttributes: new { @class = "form-control", required = true, type = "number", onKeyPress = "if(this.value.length==11) return false;" })
+                                @Html.ValidationMessageFor(d => d.PhoneNumber, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="label-input100" for="AddressAr"> عنوان المنجر بالعربى</label>
+                            <div class="wrap-input100">
+                                @Html.TextBoxFor(model => model.AddressAr, htmlAttributes: new { @class = "form-control" })
+                                @Html.ValidationMessageFor(d => d.AddressAr, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="label-input100" for="AddressEn"> عنوان المنجر بالانجليزى</label>
+                            <div class="wrap-input100">
+                                @Html.TextBoxFor(model => model.AddressEn, htmlAttributes: new { @class = "form-control" })
+                                @Html.ValidationMessageFor(d => d.AddressEn, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" >
+                                <div class="col-12">
+                                  
+                                        <label for="PhoneNumber" class="col-sm-5 control-label required">البريد الالكتروني الرسمي:</label>
+                                        <div class="wrap-input100">
+                                            @Html.TextBoxFor(model => model.OfficialEmail, htmlAttributes: new { @class = "form-control"})
+                                            @Html.ValidationMessageFor(d => d.OfficialEmail, "", new { @class = "text-danger" })
+                                        </div>
+                                   
+                                </div>
+                                <div class="col-12">
+                                   
+                                        <label for="PhoneNumber" class="col-sm-5 control-label required">تأكيد البريد الالكتروني الرسمي :</label>
+                                        <div class="wrap-input100">
+                                            @Html.TextBoxFor(model => model.ConfirmOfficialEmail, htmlAttributes: new { @class = "form-control"})
+                                            @Html.ValidationMessageFor(d => d.ConfirmOfficialEmail, "", new { @class = "text-danger" })
+                                        </div>
+                                   
+                                </div>
+                            </div>
+                             <div class="row" >
+                                <div class="col-12">
+                                    
+                                        <label for="PhoneNumber" class="col-sm-5 control-label required">رقم السجل التجارى:</label>
+                                        <div class="wrap-input100">
+                                            @Html.TextBoxFor(model => model.TaxReportNumber, htmlAttributes: new { @class = "form-control", required = true, type = "number", onKeyPress = "if(this.value.length==11) return false;" })
+                                            @Html.ValidationMessageFor(d => d.TaxReportNumber, "", new { @class = "text-danger" })
+                                        </div>
+                                    
+                                </div>
+                                <div class="col-lg-6">
+                                   
+                                        <label for="PhoneNumber" class="col-sm-5 control-label required">صورة السجل التجاري:</label>
+                                        <div class="wrap-input100">
+                                            <input class="form-control" type="file" required name="TaxReportImage" id="TaxReportImage" accept="image/*" />
+                                            @Html.ValidationMessageFor(d => d.TaxReportImage, "", new { @class = "text-danger" })
+                                        </div>
+                        
+                                </div>
+                            </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <label class="label-input100 required" for="StoreLogo"> صوره شعار المنجر</label>
+                            <div class="wrap-input100">
+                                <input class="form-control" type="file" required name="StoreLogo" id="StoreLogo" accept="image/*" />
+                                @Html.ValidationMessageFor(d => d.StoreLogo, "", new { @class = "text-danger" })
+                            </div>
+                            <hr />
+                        </div>
+                        <div class="col-6">
+                            <label class="label-input100" for="CoverImage"> صوره غلاف المنجر</label>
+                            <div class="wrap-input100">
+                                <input class="form-control" type="file" name="CoverImage" id="CoverImage" accept="image/*" />
+                                @Html.ValidationMessageFor(d => d.CoverImage, "", new { @class = "text-danger" })
+                            </div>
+                            <hr />
+                        </div>
+                    </div>
+                      <div class="row" style="margin:10px;">
+                                <div class="col-12">
+                                    
+                                        <label for="StoreLogo" class="label-input100 required">
+                                            هل منشأتك مسجلة في ضريبة القيمة المضافة؟:
+                                        </label>
+                                        <div class="wrap-input100">
+                                            @Html.EditorFor(d => d.ValueAddedTax)
+                                            @Html.ValidationMessageFor(d => d.ValueAddedTax, "", new { @class = "text-danger" })
+                                        </div>
+                                   
+                                </div>
+                            </div>
+                            <div class="row" id="Tax" style="display:none">
+                                <div class="col-6">
+                                        <label for="PhoneNumber" class="label-input100">صورة شهادة ضريبة القيمة المضافة:</label>
+                                        <div class="wrap-input100">
+                                            <input class="form-control" type="file" required name="ValueAddedTaxImage" id="ValueAddedTaxImage" accept="image/*" />
+                                            @Html.ValidationMessageFor(d => d.ValueAddedTaxImage, "", new { @class = "text-danger" })
+                                        </div>
+                                </div>
+                                <div class="col-6">
+                                        <label for="PhoneNumber" class="label-input100">صورة شهادة الضريبة:</label>
+                                        <div class="wrap-input100">
+                                            <input class="form-control" type="file" required name="TaxImage" id="TaxImage" accept="image/*" />
+                                            @Html.ValidationMessageFor(d => d.TaxImage, "", new { @class = "text-danger" })
+                                        </div>
+                                </div>
+                            </div>
+                    <h4 class="mb-3 text-info">مواعيد العمل</h4>
+
+                    <div class="row">
+                        <div class="col-6">
+                            <label class="label-input100 required">توقيت العمل</label>
+                            <div class="wrap-input100 border-0">
+                                @Html.EditorFor(d => d.Is24HourOpen)
+                                <label class="label-input100 d-inline" for="Is24HourOpen">المنجر يعمل 24 ساعه</label>
+                                @Html.ValidationMessageFor(d => d.Is24HourOpen, "", new { @class = "text-danger" })
+                            </div>
+                            <hr />
+                        </div>
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col-6">
+                                    <label class="label-input100 required" for="From"> من</label>
+                                    <div class="wrap-input100">
+                                        @Html.EditorFor(model => model.From, new { htmlAttributes = new { @class = "form-control datetimepicker-input", data_target = "#timepickerfrom", data_toggle = "datetimepicker", required = true } })
+                                        @Html.ValidationMessageFor(d => d.From, "", new { @class = "text-danger" })
+                                        <div class="input-group-append" data-target="#timepickerfrom" data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="far fa-clock"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <label class="label-input100 required" for="To"> الى</label>
+                                    <div class="wrap-input100">
+                                        @Html.EditorFor(model => model.To, new { htmlAttributes = new { @class = "form-control datetimepicker-input", data_target = "#timepickerto", data_toggle = "datetimepicker", required = true } })
+                                        @Html.ValidationMessageFor(d => d.To, "", new { @class = "text-danger" })
+                                        <div class="input-group-append" data-target="#timepickerto" data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="far fa-clock"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="mb-3 text-info">بيانات التواصل مع المسؤول</h4>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="OwnerName" class="label-input100 required">اسم المسؤل</label>
+                            <div class="wrap-input100">
+                                @Html.EditorFor(model => model.OwnerName, new { htmlAttributes = new { @class = "form-control valid", required = true } })
+                                @Html.ValidationMessageFor(d => d.OwnerName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label for="OwnerPhoneNumber" class="label-input100 required">رقم الهاتف</label>
+                            <div class="wrap-input100">
+                                @Html.EditorFor(model => model.OwnerPhoneNumber, new { htmlAttributes = new { @class = "form-control valid", type = "number", required = true, onKeyPress = "if(this.value.length==11) return false;" } })
+                                @Html.ValidationMessageFor(d => d.OwnerPhoneNumber, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="OwnerEmail" class="label-input100 required">البريد الالكترونى</label>
+                            <div class="wrap-input100">
+                                @Html.EditorFor(model => model.OwnerEmail, new { htmlAttributes = new { @class = "form-control valid", required = true } })
+                                @Html.ValidationMessageFor(d => d.OwnerEmail, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container-contact100-form-btn">
+                        <button style="background: #F16E73 !important" class="contact100-form-btn">
+                            <span>
+                                التسجيل
+                                <i class="fa fa-spinner fa-spin" style="display:none;"></i>
+                                <i class="zmdi zmdi-arrow-left m-l-8"> </i>
+                            </span>
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <!-- =============================================================================================== -->
+    <script src="~/Content/storejoin/vendor/jquery/jquery-3.2.1.min.js"></script>
+    <!-- =============================================================================================== -->
+    <script src="~/Content/storejoin/vendor/animsition/js/animsition.min.js"></script>
+    <!-- =============================================================================================== -->
+    <script src="~/Content/storejoin/vendor/bootstrap/js/popper.js"></script>
+    <script src="~/Content/storejoin/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <!-- =============================================================================================== -->
+    <script src="~/Content/storejoin/vendor/select2/select2.min.js"></script>
+    <!-- =============================================================================================== -->
+    <script src="~/Content/storejoin/vendor/countdowntime/countdowntime.js"></script>
+    <!-- =============================================================================================== -->
+    <!-- daterangepicker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/Content/assets/plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="~/Content/assets/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <!-- =============================================================================================== -->
+    <script src="~/Content/storejoin/js/main.js"></script>
+    @*<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=@(System.Configuration.ConfigurationManager.AppSettings["GOOGLE_MAPS_KEY"])&callback=initAutocomplete&libraries=places&v=weekly"
+            defer></script>*@
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(function () {
+            $("form").submit(function () {
+                if ($(this).valid()) {
+                    $(".contact100-form-btn").attr("disabled", true);
+                    $(".fa-spinner").show();
+                    $(".zmdi-arrow-left").hide();
+                }
+            })
+
+            $('.datetimepicker-input').datetimepicker({
+                format: 'LT',
+            });
+
+            $("#Is24HourOpen").change(function () {
+                if ($(this).is(":checked")) {
+                    $("#To").attr("disabled", true)
+                    $("#From").attr("disabled", true)
+                }
+                else {
+                    $("#To").attr("disabled", false)
+                    $("#From").attr("disabled", false)
+                }
+            })
+            $("#ValueAddedTax").change(function () {
+                if ($(this).is(":checked")) {
+                    $("#Tax").css("display", "block");
+                } else {
+                    $("#Tax").css("display", "none");
+                }
+            });
+            $("#ValueAddedTax").trigger("change");
+            $("#Is24HourOpen").trigger("change");
+        })
+    </script>
+</body>
+</html>

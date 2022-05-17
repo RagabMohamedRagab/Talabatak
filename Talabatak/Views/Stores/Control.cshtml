@@ -1,0 +1,216 @@
+﻿@model Talabatak.Models.Domains.Store
+@{
+    ViewBag.Title = "التحكم بـ " + Model.NameAr;
+}
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-fw fa-plus"></i> @ViewBag.Title</h3>
+    </div>
+    <div class="panel-body">
+        <div id="accordion" class="panel-group" aria-multiselectable="true" role="tablist">
+            <div class="panel panel-success">
+                @if (TempData["AcceptSuccess"] != null)
+                {
+                    <div class="alert alert-success text-center">
+                        تم قبول تسجيل المنجر بنجاح
+                    </div>
+                }
+                @if (TempData["RejectSuccess"] != null)
+                {
+                    <div class="alert alert-success text-center">
+                        تم رفض تسجيل المنجر بنجاح
+                    </div>
+                }
+                <div id="collapseOne" class="panel-collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        <h3 class="text-center">@ViewBag.Title</h3>
+                        <hr />
+                        <div class="container">
+                            <div class="row text-center">
+                                <div class="col-12">
+                                    حاله التسجيل فى التطبيق الحاليه:
+                                    @if (Model.IsAccepted.HasValue && Model.IsAccepted.Value == true)
+                                    {
+                                        <span class="badge" style="background-color:forestgreen">مقبول</span>
+                                    }
+                                    else if (Model.IsAccepted.HasValue && Model.IsAccepted.Value == false)
+                                    {
+                                        <span class="badge" style="background-color:red">مرفوض</span>
+                                        var RejectedOn = TimeZoneInfo.ConvertTimeFromUtc(Model.RejectedOn.Value, TimeZoneInfo.FindSystemTimeZoneById("Sudan Standard Time"));
+                                        <p class="mt-20">تاريخ الرفض: <span dir="ltr">@RejectedOn.ToString("dd MMMM yyyy hh:mm tt")</span></p>
+                                        if (!string.IsNullOrEmpty(Model.RejectionReason))
+                                        {
+                                            <p class="mt-20">سبب الرفض: @Model.RejectionReason</p>
+                                        }
+                                        using (Html.BeginForm("Accept", "Stores", FormMethod.Post))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            @Html.HiddenFor(d => d.Id)
+                                            <div class="row text-center" style="margin:15px;">
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <button type="submit" class="btn btn-success">قبول تسجيل المنجر</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="badge" style="background-color:orange">بانتظار الموافقه</span>
+                                        <hr />
+                                        using (Html.BeginForm("Accept", "Stores", FormMethod.Post))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            @Html.HiddenFor(d => d.Id)
+                                            <div class="row text-center" style="margin:10px;">
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <button type="submit" class="btn btn-success">قبول تسجيل المنجر</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        <div class="col-lg-12 mt-15 mb-15">
+                                            <div class="separator">&nbsp;&nbsp;&nbsp;&nbsp;أو&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                                        </div>
+                                        <div class="col-lg-12 mt-15 mb-15">
+                                            رفض المنجر
+                                            <p class="text-muted">يمكنك كتابة سبب لرفض قبول المنجر او تركه فارغاً</p>
+                                        </div>
+                                        using (Html.BeginForm("Reject", "Stores", FormMethod.Post))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            @Html.HiddenFor(d => d.Id)
+                                            <div class="row" style="margin:10px;">
+                                                <div class="col-lg-6">
+                                                    <div class="form-group">
+                                                        <label for="NameAr" class="col-sm-5 control-label">سبب الرفض (اختيارى): </label>
+                                                        <div class="col-sm-7">
+                                                            @Html.TextAreaFor(model => model.RejectionReason, htmlAttributes: new { @class = "form-control", rows = 10 })
+                                                            @Html.ValidationMessageFor(d => d.RejectionReason, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group mt-10">
+                                                        <button type="submit" class="btn btn-danger">رفض تسجيل المنجر</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    @if (Model.IsAccepted.HasValue && Model.IsAccepted.Value == true)
+                                    {
+                                        if (Model.IsDeleted == true)
+                                        {
+                                            <span class="badge" style="background-color:red">محذوف</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge" style="background-color:forestgreen">غير محذوف</span>
+                                        }
+                                    }
+
+                                    @if (Model.IsAccepted.HasValue && Model.IsAccepted.Value == true)
+                                    {
+                                        if (Model.IsBlocked == true)
+                                        {
+                                            <span class="badge" style="background-color:red">موقوف</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge" style="background-color:forestgreen">نشط</span>
+                                        }
+                                    }
+
+                                    @if (Model.IsAccepted.HasValue && Model.IsAccepted.Value == true)
+                                    {
+                                        if (Model.IsHidden == true)
+                                        {
+                                            <span class="badge" style="background-color:red">غير مرئى</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge" style="background-color:forestgreen">مرئى</span>
+                                        }
+                                    }
+                                    @if (Model.IsAccepted.HasValue && Model.IsAccepted.Value == true)
+                                    {
+                                        using (Html.BeginForm("Reject", "Stores", FormMethod.Post))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            @Html.HiddenFor(d => d.Id)
+                                            <div class="row" style="margin:10px;">
+                                                <div class="col-lg-12 mt-15 mb-15">
+                                                    رفض المنجر
+                                                    <p class="text-muted">يمكنك كتابة سبب لرفض قبول المنجر او تركه فارغاً</p>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="form-group">
+                                                        <label for="NameAr" class="col-sm-5 control-label">سبب الرفض (اختيارى): </label>
+                                                        <div class="col-sm-7">
+                                                            @Html.TextAreaFor(model => model.RejectionReason, htmlAttributes: new { @class = "form-control", rows = 10 })
+                                                            @Html.ValidationMessageFor(d => d.RejectionReason, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group mt-10">
+                                                        <button type="submit" class="btn btn-danger">رفض تسجيل المنجر</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        <div class="row" style="margin:10px;">
+                                            <hr />
+                                            <div class="col-lg-12">
+                                                @if (Model.IsBlocked == false)
+                                                {
+                                                    <a href="@Url.Action("ToggleStop", new { Id = Model.Id })" class="btn btn-warning"><i class="fa fa-ban"></i> ايقاف المنجر</a> <span> |</span>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("ToggleStop", new { Id = Model.Id })" class="btn btn-success"><i class="fa fa-check"></i> تشغيل المنجر</a> <span> |</span>
+                                                }
+                                                @if (Model.IsHidden == false)
+                                                {
+                                                    <a href="@Url.Action("ToggleHide", new { Id = Model.Id })" class="btn btn-default"><i class="fa fa-eye-slash"></i> اخفاء المنجر</a> <span> | </span>
+                                                }
+                                                else
+                                                {
+                                                    if (Model.IsBlocked == false)
+                                                    {
+                                                        <a href="@Url.Action("ToggleHide", new { Id = Model.Id })" class="btn btn-success"><i class="fa fa-eye"></i> اظهار المنجر</a> <span> | </span>
+                                                    }
+                                                }
+                                                @if (Model.IsDeleted == false)
+                                                {
+                                                    <a href="@Url.Action("ToggleDelete", new { Id = Model.Id })" class="btn btn-danger"><i class="fa fa-trash"></i> حذف المنجر</a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("ToggleDelete", new { Id = Model.Id })" class="btn btn-success"><i class="fa fa-undo"></i> استعاده المنجر</a>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <a href="@Url.Action("Index", "Stores")" class="btn btn-default">العودة إلى المتاجر</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

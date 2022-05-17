@@ -1,0 +1,235 @@
+﻿@model Talabatak.Models.ViewModels.CreateWorkerVM
+@{
+    ViewBag.Title = "اضافه عامل جديد";
+    var Users = ViewBag.Users as List<Talabatak.Models.Domains.ApplicationUser>;
+    var Cities = ViewBag.Cities as List<Talabatak.Models.Domains.City>;
+    var Jobs = ViewBag.Jobs as List<Talabatak.Models.Domains.Job>;
+}
+<style>
+    .select2 {
+        height: 100%;
+    }
+</style>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-fw fa-plus"></i> @ViewBag.Title</h3>
+    </div>
+    <div class="panel-body">
+        <div id="accordion" class="panel-group" aria-multiselectable="true" role="tablist">
+            <div class="panel panel-success">
+                <div id="collapseOne" class="panel-collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                        <hr />
+                        @using (Html.BeginForm("CreateWorker", "AppJobs", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <div class="row" style="margin:10px;">
+                                <div class="col-lg-12 text-center mb-20">
+                                    <p class="text-right">- جميع الحقول بالعلامه <span class="text-red">*</span> اجبارى</p>
+                                    <h4>اختيار من الاعضاء المسجليين حالياً</h4>
+                                    <h5 class="text-muted">برجاء العلم انه فى حاله اذا لم تجد العضو المطلوب ، فهناك احتماليه بان هذا العضو اما هو عامل بالفعل او انه غير مسجل من الاساس</h5>
+                                </div>
+                                <div class="col-lg-12 mb-20">
+                                    <select class="select2" name="UserId" id="UserId">
+                                        <option @(Model == null || Users.Any(w => w.Id == Model.UserId) == false ? "selected" : "") value="-1">قم باختيار احد الاعضاء المسجليين من قبل</option>
+                                        @foreach (var user in Users)
+                                        {
+                                            <option @(Model != null && Model.UserId == user.Id ? "selected" : "") value="@user.Id">@user.Name (@user.PhoneNumber)</option>
+                                        }
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div id="new-driver-container">
+                                <div class="col-lg-12 mt-15 mb-15">
+                                    <div class="separator">&nbsp;&nbsp;&nbsp;&nbsp;أو&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                                </div>
+                                <div class="row" style="margin:10px;">
+                                    <div class="col-lg-12 mb-20">
+                                        <h4 class="text-center">اضافه عامل جديد</h4>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="Name" class="col-sm-5 control-label required">الاسم:</label>
+                                            <div class="col-sm-7">
+                                                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control valid", required = true } })
+                                                @Html.ValidationMessageFor(d => d.Name, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="Email" class="col-sm-5 control-label required">البريد الالكترونى:</label>
+                                            <div class="col-sm-7">
+                                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control valid", required = true } })
+                                                @Html.ValidationMessageFor(d => d.Email, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" style="margin:10px;">
+                                    <div class="col-lg-6">
+                                        <p class="text-muted">&nbsp;</p>
+                                        <div class="form-group">
+                                            <label for="CityId" class="col-sm-5 control-label required">المدينة: </label>
+                                            <div class="col-sm-7">
+                                                <select name="CityId" id="CityId" class="form-control select2" required>
+                                                    @foreach (var city in Cities.OrderBy(w => w.Country.NameAr).ThenBy(w => w.NameAr))
+                                                    {
+                                                        <option value="@city.Id" @(Model != null && Model.CityId == city.Id ? "selected" : "")>@city.NameAr - @city.Country.NameAr</option>
+                                                    }
+                                                </select>
+                                                @Html.ValidationMessageFor(d => d.CityId, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <p class="text-muted">&nbsp;</p>
+                                        <div class="form-group">
+                                            <label for="PhoneNumber" class="col-sm-5 control-label required">رقم الهاتف بدون الكود الدولى:</label>
+                                            <div class="col-sm-7">
+                                                @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control valid", required = true, type = "number", step = "any" } })
+                                                @Html.ValidationMessageFor(d => d.PhoneNumber, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+                                <div class="row" style="margin:10px;">
+                                    <div class="col-lg-6">
+                                        <p class="text-muted">&nbsp;</p>
+                                        <div class="form-group">
+                                            <label for="Password" class="col-sm-5 control-label required">كلمه السر:</label>
+                                            <div class="col-sm-7">
+                                                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control valid", required = true } })
+                                                @Html.ValidationMessageFor(d => d.Password, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <p class="text-muted">&nbsp;</p>
+                                        <div class="form-group">
+                                            <label for="ConfirmPassword" class="col-sm-5 control-label required">تأكيد كلمه السر:</label>
+                                            <div class="col-sm-7">
+                                                @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control valid", required = true } })
+                                                @Html.ValidationMessageFor(d => d.ConfirmPassword, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin:10px;">
+                                <div class="col-lg-6">
+                                    <p class="text-muted">&nbsp;</p>
+                                    <div class="form-group">
+                                        <label for="JobIds" class="col-sm-5 control-label required">الوظائف:</label>
+                                        <div class="col-sm-7">
+                                            <select class="form-control select2" required multiple id="JobIds" name="JobIds">
+                                                @foreach (var job in Jobs)
+                                                {
+                                                    <option @(Model != null && Model.JobIds != null && Model.JobIds.Any(w => w == job.Id) ? "selected" : "") @(Request.QueryString["JobId"] != null && Request.QueryString["JobId"] == job.Id.ToString() ? "selected" : "") value="@job.Id">@job.NameAr</option>
+                                                }
+                                            </select>
+                                            @Html.ValidationMessageFor(d => d.JobIds, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <p class="text-muted">&nbsp;</p>
+                                    <div class="form-group">
+                                        <label for="Email" class="col-sm-5 control-label required">نسبـة الربح:</label>
+                                        <div class="col-sm-2">
+                                            @Html.EditorFor(model => model.Profit, new { htmlAttributes = new { @class = "form-control valid", required = true } })
+                                            @Html.ValidationMessageFor(d => d.Profit, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row" style="margin:10px;">
+                                <div class="col-lg-6">
+                                    <p class="text-muted">&nbsp;</p>
+                                    <div class="form-group">
+                                        <label for="DescriptionAr" class="col-sm-5 control-label">وصف العامل بالعربى:</label>
+                                        <div class="col-sm-7">
+                                            @Html.TextAreaFor(model => model.DescriptionAr, new { @class = "form-control valid", rows = 6  })
+                                            @Html.ValidationMessageFor(d => d.DescriptionAr, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <p class="text-muted">&nbsp;</p>
+                                    <div class="form-group">
+                                        <label for="DescriptionEn" class="col-sm-5 control-label">وصف العامل بالانجليزى:</label>
+                                        <div class="col-sm-7">
+                                            @Html.TextAreaFor(model => model.DescriptionEn, new { @class = "form-control valid", rows = 6 })
+                                            @Html.ValidationMessageFor(d => d.DescriptionEn, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin:10px;">
+                                <div class="col-lg-6">
+                                    <p class="text-muted">&nbsp;</p>
+                                    <div class="form-group">
+                                        <label for="PersonalPhoto" class="col-sm-5 control-label">صوره العامل الشخصية:</label>
+                                        <div class="col-sm-7">
+                                            <input class="form-control" type="file" name="PersonalPhoto" id="PersonalPhoto" accept="image/*" />
+                                            @Html.ValidationMessageFor(d => d.PersonalPhoto, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <p class="text-muted">&nbsp;</p>
+                                    <div class="form-group">
+                                        <label for="IdentityPhoto" class="col-sm-5 control-label">صوره البطاقة الشخصية:</label>
+                                        <div class="col-sm-7">
+                                            <input class="form-control" type="file" name="IdentityPhoto" id="IdentityPhoto" accept="image/*" />
+                                            @Html.ValidationMessageFor(d => d.IdentityPhoto, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p><span class="badge bg-orange">تنوية: </span>  عند الضغط على اضافه عامل ، برجاء الانتظار وعدم اغلاق الصفحه ، قد ياخد اضافه العامل بعض الوقت</p>
+
+                            <button type="submit" class="btn btn-success">اضافه العامل</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            @Html.ActionLink("العودة", "Workers", null, new { @class = "btn btn-default" })
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("#UserId").change(function () {
+                var value = $("#UserId").val();
+                if (value == -1) {
+                    $("#new-driver-container").show();
+                    $("#Name,#CityId,#PhoneNumber,#Email,#Password,#ConfirmPassword").attr("disabled", false);
+                }
+                else {
+                    $("#new-driver-container").hide();
+                    $("#Name,#CityId,#PhoneNumber,#Email,#Password,#ConfirmPassword").attr("disabled", true);
+                }
+            })
+
+            $("#UserId").trigger("change");
+        })
+    </script>
+}
+

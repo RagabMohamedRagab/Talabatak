@@ -1,0 +1,171 @@
+﻿@model IEnumerable<Talabatak.Models.Domains.Store>
+@{
+    ViewBag.Title = "المناجر";
+}
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title text-center"><i class="fa fa-fw fa-shopping-bag"></i> المتاجر</h3>
+        </div>
+        @using (Html.BeginForm("Index", "Stores", FormMethod.Get))
+        {
+            <label for="StoreId" class="text-center">أختر مدة التقـريـر أو المتـجر</label>
+            <div class="row">
+                <div class="col-lg-12">
+                    <select name="Search" id="Search" class="form-control">
+                        <option value="" disabled selected>اختر نوع كشف الحساب</option>
+                        <option value="1">دائن</option>
+                        <option value="2">مدين</option>
+                        <option value="3">الجميع</option>
+                    </select>
+                </div>
+                <div class="col-lg-3">
+
+                </div>
+                <div class="col-lg-6">
+                    <button type="submit" class="btn btn-primary form-control">بحــث</button>
+                </div>
+                <div class="col-lg-3">
+
+                </div>
+
+            </div>
+        }
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table id="table" cellpadding="0" cellspacing="0" border="0" class="table text-center table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>الترتيب</th>
+                            <th>المنجر</th>
+                            <th>الحاله</th>
+                            <th>الحذف</th>
+                            <th>الايقاف من التطبيق</th>
+                            <th>الظهور فى التطبيق</th>
+                            <th>التحكم</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OrderByDescending(d => d.SortingNumber))
+                        {
+                            <tr>
+                                <td id="sort_number_@item.Id">@item.SortingNumber</td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.NameAr)
+                                </td>
+                                <td>
+                                    @if (item.IsAccepted.HasValue && item.IsAccepted.Value == true)
+                                    {
+                                        <span class="badge" style="background-color:forestgreen">مقبول</span>
+                                    }
+                                    else if (item.IsAccepted.HasValue && item.IsAccepted.Value == false)
+                                    {
+                                        <span class="badge" style="background-color:red">مرفوض</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge" style="background-color:orange">بانتظار الموافقه</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.IsAccepted.HasValue && item.IsAccepted.Value == true)
+                                    {
+                                        if (item.IsDeleted == true)
+                                        {
+                                            <span class="badge" style="background-color:red">محذوف</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge" style="background-color:forestgreen">غير محذوف</span>
+                                        }
+                                    }
+                                    else if (item.IsAccepted.HasValue && item.IsAccepted.Value == false)
+                                    {
+                                        <span class="badge" style="background-color:red">مرفوض</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge" style="background-color:orange">بانتظار الموافقه</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.IsAccepted.HasValue && item.IsAccepted.Value == true)
+                                    {
+                                        if (item.IsBlocked == true)
+                                        {
+                                            <span class="badge" style="background-color:red">موقوف</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge" style="background-color:forestgreen">نشط</span>
+                                        }
+                                    }
+                                    else if (item.IsAccepted.HasValue && item.IsAccepted.Value == false)
+                                    {
+                                        <span class="badge" style="background-color:red">مرفوض</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge" style="background-color:orange">بانتظار الموافقه</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.IsAccepted.HasValue && item.IsAccepted.Value == true)
+                                    {
+                                        if (item.IsHidden == true)
+                                        {
+                                            <span class="badge" style="background-color:red">غير مرئى</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge" style="background-color:forestgreen">مرئى</span>
+                                        }
+                                    }
+                                    else if (item.IsAccepted.HasValue && item.IsAccepted.Value == false)
+                                    {
+                                        <span class="badge" style="background-color:red">مرفوض</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge" style="background-color:orange">بانتظار الموافقه</span>
+                                    }
+                                </td>
+                                <td>
+                                   
+                                 
+                                    @Html.ActionLink("التفاصيل", "Details", new { id = item.Id }) 
+                                 
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+@section Scripts{
+    <script>
+        function ChangeSortingNumber(Id, oldNumber) {
+            var newNumber = parseInt(window.prompt("قم بكتابه الترتيب الجديد", oldNumber));
+            if (/^[0-9.,]+$/.test(newNumber) == true) {
+                $("#cover-spin").show();
+                $.ajax({
+                    url: "@Url.Action("SetSortingNumber", "Stores")",
+                    type: "POST",
+                    data: { StoreId: Id, Number: newNumber },
+                    success: function (results) {
+                        if (results.Success == true) {
+                            $("#sort_number_" + Id).text(newNumber);
+                            $("#change-sorting-btn_" + Id).attr("onclick", "ChangeSortingNumber(" + Id + "," + newNumber +")");
+                            toastr.success("تم تحديث الترتيب بنجاح");
+                        }
+                        else {
+                            toastr.error(results.Message);
+                        }
+                        $("#cover-spin").hide();
+                    }
+                })
+            }
+        }
+    </script>
+}

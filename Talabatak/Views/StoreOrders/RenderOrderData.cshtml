@@ -1,0 +1,118 @@
+﻿@model Talabatak.Models.Domains.StoreOrder
+
+<td>
+    @{
+        var Item = Model.Items.FirstOrDefault(w => w.IsDeleted == false);
+        Talabatak.Models.Domains.Store OrderStore = null;
+        if (Item != null)
+        {
+            OrderStore = Item.Product.Category.Store;
+        }
+    }
+    @if (OrderStore != null)
+    {
+        <p>@OrderStore.NameAr</p>
+    }
+    else
+    {
+        <p>---</p>
+    }
+</td>
+<td>
+    @switch (Model.Status)
+    {
+        case Talabatak.Models.Enums.StoreOrderStatus.Cancelled:
+            <span class="badge bg-red">تم الغاءه</span>
+            break;
+        case Talabatak.Models.Enums.StoreOrderStatus.Delivering:
+            <span class="badge bg-blue">جارى التوصيل</span>
+            break;
+        case Talabatak.Models.Enums.StoreOrderStatus.Finished:
+            <span class="badge bg-success">تم التوصيل</span>
+            break;
+        case Talabatak.Models.Enums.StoreOrderStatus.Placed:
+            <span class="badge bg-orange"><i class="fa fa-exclamation-triangle"></i> جديد</span>
+            break;
+        case Talabatak.Models.Enums.StoreOrderStatus.Preparing:
+            <span class="badge bg-secondary">جارى التحضير</span>
+            break;
+        case Talabatak.Models.Enums.StoreOrderStatus.Rejected:
+            <span class="badge bg-red">مرفوض</span>
+            break;
+    }
+</td>
+<td>
+    @Model.Code
+</td>
+<td>
+    @if (Model.UserAddressId.HasValue == true)
+    {
+        <p>@Model.UserAddress.Name</p>
+        <p><a href="tel:@Model.UserAddress.PhoneNumber">@Model.UserAddress.PhoneNumber</a></p>
+    }
+    else
+    {
+        <p>@Model.User.Name</p>
+        <p><a href="tel:@Model.User.PhoneNumber">@Model.User.PhoneNumber</a></p>
+    }
+</td>
+<td>
+    @Model.Total ريال
+    @if (Model.PaymentMethod == Talabatak.Models.Enums.PaymentMethod.Cash)
+    {
+        <p>
+            الدفع عند الاستلام
+        </p>
+    }
+    else if (Model.PaymentMethod == Talabatak.Models.Enums.PaymentMethod.Online)
+    {
+        <p>
+            الدفع اونلاين
+        </p>
+    }
+    else if (Model.PaymentMethod == Talabatak.Models.Enums.PaymentMethod.Wallet)
+    {
+        <p>
+            الدفع من المحفظة
+        </p>
+    }
+    @if (Model.IsPaid == true)
+    {
+        <p>(<i class="fa fa-check-circle text-success"></i> تم الدفع)</p>
+    }
+    else
+    {
+        <p>(<i class="fa fa-times-circle text-red"></i> لم يتم الدفع)</p>
+    }
+</td>
+@{
+    var CreatedOn = TimeZoneInfo.ConvertTimeFromUtc(Model.CreatedOn, TimeZoneInfo.FindSystemTimeZoneById("Sudan Standard Time"));
+}
+<td>@CreatedOn.ToString("dd MMM yyyy")<br />@CreatedOn.ToString("hh:mm tt")</td>
+<td>
+    @if (Model.DriverId.HasValue == true)
+    {
+        <p>@Model.Driver.User.Name</p>
+        <p><a href="tel:@Model.Driver.User.PhoneNumber">@Model.Driver.User.PhoneNumber</a></p>
+    }
+    else
+    {
+        <p>بدون</p>
+    }
+</td>
+<td>
+    <a class="btn btn-sm btn-info" style="margin-bottom:10px" href="@Url.Action("Details", new { ModelId = Model.Id, ReturnUrl = Request.Url })"><i class="fa fa-info-circle"></i> المعلومات</a> |
+    <a class="btn btn-sm btn-default" style="margin-bottom:10px" href="@Url.Action("Chat", new { OrderId = Model.Id, ReturnUrl = Request.Url })"><i class="fa fa-comments"></i> المحادثات</a>
+    @*@if (Model.Status == Talabatak.Models.Enums.StoreOrderStatus.Preparing)
+        {
+            <span> | </span><a class="btn btn-sm btn-danger" style="margin-bottom:10px" onclick="return confirm('متأكد من رفض الطلب؟')" href="@Url.Action("Reject", new { OrderId = Model.Id, ReturnUrl = Request.Url })"><i class="fa fa-times-circle"></i> الرفض</a>
+        }
+        @if (Model.Status == Talabatak.Models.Enums.StoreOrderStatus.Placed)
+        {
+            <span> | </span><a class="btn btn-sm btn-success" style="margin-bottom:10px" onclick="return confirm('الموافقه على الطلب والبحث عن سائق؟')" href="@Url.Action("Accept", new { OrderId = Model.Id, ReturnUrl = Request.Url })"><i class="fa fa-check-circle"></i> الموافقه</a>
+        }
+        @if (Model.Status == Talabatak.Models.Enums.StoreOrderStatus.Placed)
+        {
+            <span> | </span><a class="btn btn-sm btn-danger" style="margin-bottom:10px" onclick="return confirm('متأكد من رفض الطلب؟')" href="@Url.Action("Reject", new { OrderId = Model.Id, ReturnUrl = Request.Url })"><i class="fa fa-times-circle"></i> الرفض</a>
+        }*@
+</td>

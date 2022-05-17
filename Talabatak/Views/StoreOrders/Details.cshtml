@@ -1,0 +1,288 @@
+﻿@model Talabatak.Models.Domains.StoreOrder
+@{
+    ViewBag.Title = "تفاصيل الطلب رقم " + Model.Code;
+    var CreatedOn = TimeZoneInfo.ConvertTimeFromUtc(Model.CreatedOn, TimeZoneInfo.FindSystemTimeZoneById("Sudan Standard Time"));
+    DateTime? DeliveredOn = null;
+    if (Model.DeliveredOn.HasValue == true)
+    {
+        DeliveredOn = TimeZoneInfo.ConvertTimeFromUtc(Model.DeliveredOn.Value, TimeZoneInfo.FindSystemTimeZoneById("Sudan Standard Time"));
+    }
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title no-print">@ViewBag.Title</h3>
+                <div class="box-tools pull-right">
+                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                </div>
+            </div><!-- /.box-header -->
+            <div class="box-body">
+                <div class="text-center" style="margin-bottom:10px;">
+                    <h4 style="margin-bottom:20px;">الطلب رقم @Model.Code</h4>
+                    <h4 style="margin:10px">
+                        @switch (Model.Status)
+                        {
+                            case Talabatak.Models.Enums.StoreOrderStatus.Cancelled:
+                                <span class="badge bg-red">تم الغاءه</span>
+                                break;
+                            case Talabatak.Models.Enums.StoreOrderStatus.Delivering:
+                                <span class="badge bg-blue">جارى التوصيل</span>
+                                break;
+                            case Talabatak.Models.Enums.StoreOrderStatus.Finished:
+                                <span class="badge bg-success">تم التوصيل</span>
+                                break;
+                            case Talabatak.Models.Enums.StoreOrderStatus.Placed:
+                                <span class="badge bg-orange"><i class="fa fa-exclamation-triangle"></i> جديد</span>
+                                break;
+                            case Talabatak.Models.Enums.StoreOrderStatus.Preparing:
+                                <span class="badge bg-secondary">جارى التحضير</span>
+                                break;
+                            case Talabatak.Models.Enums.StoreOrderStatus.Rejected:
+                                <span class="badge bg-red">مرفوض</span>
+                                break;
+                        }
+                    </h4>
+                    <h4 style="margin:10px" class="no-print">
+                        <br />
+                        <a href="@ViewBag.ReturnUrl" class="btn btn-default no-print">العودة</a>
+                        <button type="button" onclick="window.print();" class="btn"><i class="fa fa-print"></i> طباعة</button>
+                        @if (Model.Status == Talabatak.Models.Enums.StoreOrderStatus.Delivering ||
+                            Model.Status == Talabatak.Models.Enums.StoreOrderStatus.Placed||
+                                 Model.Status == Talabatak.Models.Enums.StoreOrderStatus.Preparing)
+                        {
+                            @Html.ActionLink("إلفاء طلـب", "OrderCancel", new { OrderId = Model.Id }, new { @class = "btn btn-danger", onclick = "return confirm('هل تريد حذف الطلـب');" })
+                        }
+                    </h4>
+                </div>
+                <div>
+                    <table class="table text-center table-bordered" dir="rtl">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    اسم العميل
+                                </td>
+                                <td>
+                                    @if (Model.UserAddressId.HasValue == true)
+                                    {
+                                        <p>@Model.UserAddress.Name</p>
+                                    }
+                                    else
+                                    {
+                                        <p>@Model.User.Name</p>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    رقم هاتف العميل
+                                </td>
+                                <td dir="auto">
+                                    <a dir="auto" href="tel:@(Model.UserAddressId.HasValue == true ? Model.UserAddress.PhoneNumber : Model.User.PhoneNumber)">@(Model.UserAddressId.HasValue == true ? Model.UserAddress.PhoneNumber : Model.User.PhoneNumber)</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    عنوان العميل
+                                </td>
+                                <td>
+                                    @if (Model.UserAddressId.HasValue == true)
+                                    {
+                                        <span>العنوان: @Model.UserAddress.Address</span><br />
+                                        <span>تفصيل العنوان: @Model.UserAddress.AddressInDetails</span><br />
+                                        <span>رقم المبنى: @Model.UserAddress.BuildingNumber</span><br />
+                                        <span>رقم الطابق: @Model.UserAddress.Floor</span><br />
+                                        <span>رقم الشقه: @Model.UserAddress.Apartment</span><br />
+                                        <span>
+                                            العنوان على الخريطه:
+                                            <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=@Model.UserAddress.Latitude.Value,@Model.UserAddress.Longitude.Value" title="مشاهدة على الخريطة">اضغط هنا</a>
+                                        </span><br />
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    بريد العميل
+                                </td>
+                                <td>
+                                    <a href="mailto:@Model.User.Email">@Model.User.Email</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    سعر الطلب
+                                </td>
+                                <td>
+                                    @Model.SubTotal ريال
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    سعر التوصيل
+                                </td>
+                                <td>
+                                    @Model.DeliveryFees ريال
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    الاجمالى
+                                </td>
+                                <td>
+                                    @Model.Total ريال
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    طريقه الدفع
+                                </td>
+                                <td>
+                                    @if (Model.PaymentMethod == Talabatak.Models.Enums.PaymentMethod.Cash)
+                                    {
+                                        <span>الدفع عند الاستلام</span>
+                                    }
+                                    @if (Model.PaymentMethod == Talabatak.Models.Enums.PaymentMethod.Online)
+                                    {
+                                        <span>الدفع اون لاين</span>
+                                    }
+                                    @if (Model.PaymentMethod == Talabatak.Models.Enums.PaymentMethod.Wallet)
+                                    {
+                                        <span>الدفع عن طريق المحفظة</span>
+                                    }
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    هل تم الدفع؟
+                                </td>
+                                <td>
+                                    @if (Model.IsPaid == true)
+                                    {
+                                        <span>نعم</span>
+                                    }
+                                    else
+                                    {
+                                        <span>لا</span>
+                                    }
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    السائق
+                                </td>
+                                <td>
+                                    @if (Model.DriverId.HasValue == true)
+                                    {
+                                        <p>@Model.Driver.User.Name</p>
+                                        <p><a href="tel:@Model.Driver.User.PhoneNumber">@Model.Driver.User.PhoneNumber</a></p>
+                                    }
+                                    else
+                                    {
+                                        <p>بدون</p>
+                                    }
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    وقت الطلب
+                                </td>
+                                <td dir="auto">
+                                    @CreatedOn.ToLongDateString()<br />
+                                    @CreatedOn.ToShortTimeString()
+                                </td>
+                            </tr>
+
+                            @if (DeliveredOn.HasValue == true)
+                            {
+                                <tr>
+                                    <td>
+                                        وقت التوصيل
+                                    </td>
+                                    <td dir="auto">
+                                        @DeliveredOn.Value.ToLongDateString()<br />
+                                        @DeliveredOn.Value.ToShortTimeString()
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <h4 class="text-center">
+                        عناصر الطلب
+                    </h4>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th colspan="2" class="text-center">
+                                    المنتج
+                                </th>
+                                <th>المتجر</th>
+                                <th>
+                                    سعر القطعه
+                                </th>
+                                <th>
+                                    الكمية
+                                </th>
+                                <th>
+                                    اجمالى السعر
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Items.Where(d => d.IsDeleted == false))
+                            {
+                                <tr>
+                                    <td style="width:50px">
+                                        @if (item.Product.Images != null && item.Product.Images.FirstOrDefault(s => s.IsDeleted == false) != null)
+                                        {
+                                            <a href="~/Content/Images/Products/@item.Product.Images.FirstOrDefault(s => s.IsDeleted == false).ImageUrl" target="_blank"><img src="~/Content/Images/Products/@item.Product.Images.FirstOrDefault(s => s.IsDeleted == false).ImageUrl" width="50" loading="lazy" /></a>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a href="@Url.Action("Details", "Products", new { item.ProductId })" target="_blank">
+                                            @item.Product.NameAr<br />
+                                            @item.Product.NameEn
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <p>@item.Product.Category.Store.NameAr</p>
+                                    </td>
+                                    <td>
+                                        @item.Price ريال
+                                    </td>
+                                    <td>
+                                        @item.Quantity وحده
+                                    </td>
+                                    <td>
+                                        @item.SubTotal ريال
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                @if (Model.StoreReviews != null && Model.StoreReviews.Count() > 0)
+                {
+                <div>
+                    <hr />
+                    <h4>تقييم العميل لكم:</h4>
+                    @foreach (var review in Model.StoreReviews.Where(s => s.IsDeleted == false))
+                    {
+                        <p>عدد النجوم: @review.Rate <i class="fa fa-star" style="color:goldenrod"></i></p>
+                        <p>التقييم الكتابى: @(review.Review != null ? review.Review : "لا يوجد")</p>
+                    }
+                </div>
+                }
+            </div>
+            <a href="@ViewBag.ReturnUrl" class="btn btn-default no-print">العودة</a>
+        </div>
+    </div>
+</div>
+
+

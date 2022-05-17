@@ -1,0 +1,47 @@
+﻿@model Talabatak.Models.Domains.OtlobAy7agaOrder
+@{
+    ViewBag.Title = "محادثة الطلب رقم " + Model.Code;
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title no-print">@ViewBag.Title</h3>
+                <div class="box-tools pull-right">
+                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                </div>
+            </div><!-- /.box-header -->
+            <div class="box-body">
+                <a href="@ViewBag.ReturnUrl" class="btn btn-default no-print">العودة</a>
+                <br />
+                <hr />
+                @if (Model.Chats != null && Model.Chats.Count(w => w.IsDeleted == false) > 0)
+                {
+                    foreach (var msg in Model.Chats.Where(s => s.IsDeleted == false).OrderBy(q => q.CreatedOn))
+                    {
+                        var CreatedOn = TimeZoneInfo.ConvertTimeFromUtc(msg.CreatedOn, TimeZoneInfo.FindSystemTimeZoneById("Sudan Standard Time"));
+                        <p class="text-blue">
+                            @msg.FromUser.Name (@(msg.FromUserId == Model.UserId ? "العميل" : "السائق")) - (@CreatedOn.ToString("dd MMMM yyyy, hh:mm tt")):
+                        </p>
+                        <p>
+                            @if (msg.AttachmentUrl != null)
+                            {
+                                <a target="_blank" href="@Talabatak.Helpers.MediaControl.GetPath(Talabatak.Helpers.FilePath.Other)@msg.AttachmentUrl"><i class="fa fa-paperclip"></i> @msg.AttachmentName (مرفق - اضغط هنا لعرضه)</a>
+                            }
+                            @msg.Message
+                        </p>
+                        <hr />
+                    }
+                }
+                else
+                {
+                    <h4 class="text-center">لا توجد محادثات بين العميل والسائق</h4>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

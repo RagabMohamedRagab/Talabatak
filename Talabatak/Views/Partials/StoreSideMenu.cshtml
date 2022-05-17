@@ -1,0 +1,53 @@
+﻿@model Talabatak.Models.ViewModels.SideMenuVM
+<aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+        <!-- Sidebar user panel -->
+        <div class="user-panel">
+            <div class="pull-right image">
+                @if (Model.UserImage != null)
+                {
+                    <img src="~/Content/Images/Users/@Model.UserImage" style="height:45px" class="img-circle" alt="@Model.Name" />
+                }
+                else
+                {
+                    <img src="~/Content/assets/imgs/avatar.png" style="height:45px" class="img-circle" alt="@Model.Name" />
+                }
+            </div>
+            <div class="pull-left info">
+                <p>@Model.Name</p>
+                <a href="#"><i class="fa fa-circle text-success"></i> متواجد</a>
+            </div>
+        </div>
+        <!-- sidebar menu: : style can be found in sidebar.less -->
+        <ul class="sidebar-menu">
+            <li class="treeview @(Request.Url.AbsolutePath.ToLower().Contains("cp") ? "active" : "")">
+                <a href="@Url.Action("Index", "cp")">
+                    <i class="fa fa-dashboard"></i> <span>الرئيسية</span>
+                </a>
+            </li>
+
+            <li class="treeview @(Request.Url.AbsolutePath.ToLower().Contains("storeorders") ? "active" : "")">
+                <a href="@Url.Action("Index", "StoreOrders")">
+                    <i class="fa fa-shopping-cart"></i> <span>طلبات المناجر والمطاعم</span>
+                </a>
+            </li>
+
+            <li class="treeview @(Request.Url.AbsolutePath.ToLower().Contains("product") ? "active" : "")">
+                <a href="#">
+                    <i class="fa fa-tag"></i>
+                    <span>المنتجات </span>
+                    <i class="fa fa-angle-left pull-left"></i>
+                </a>
+
+                <ul class="treeview-menu @(Request.Url.AbsolutePath.ToLower().Contains("product") ? "menuopen" : "")">
+                    <li class="@(Request.Url.AbsolutePath.ToLower().Contains("categories") ? "active" : "")"><a href="@Url.Action("Index", "ProductCategories")"><i class="fa fa-database"></i> الاقسام والفئات</a></li>
+                    <li class="@(Request.Url.AbsolutePath.ToLower().Contains("index") ? "active" : "")"><a href="@Url.Action("Index", "Products")"><i class="fa fa-tags"></i> المنتجات</a></li>
+                    <li class="@(Request.Url.AbsolutePath.ToLower().Contains("create") ? "active" : "")"><a href="@Url.Action("Create", "Products")"><i class="fa fa-plus-circle"></i> اضافه منتج</a></li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+    <!-- /.sidebar -->
+</aside>
+
