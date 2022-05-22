@@ -164,7 +164,7 @@ namespace Talabatak.Controllers.API
                         var Image = Convert.FromBase64String(registerDTO.Image);
                         user.ImageUrl = MediaControl.Upload(FilePath.Users, Image, MediaType.Image);
                     }
-                    IdentityResult result = await _userManager.CreateAsync(user, registerDTO.Password);
+                    IdentityResult result = await UserManager.CreateAsync(user, registerDTO.Password);
                     if (!result.Succeeded)
                     {
                         Transaction.Rollback();

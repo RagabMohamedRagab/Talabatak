@@ -34,7 +34,7 @@ namespace Talabatak.Controllers.API
 
         [HttpPost]
         [Route("addtobasket")]
-        public async Task<IHttpActionResult> AddItemToBasket(AddItemToBasketDTO model)
+        public async Task<IHttpActionResult> AddItemToBasket([FromBody]AddItemToBasketDTO model)
         {
             CurrentUserId = User.Identity.GetUserId();
             var Validation = ValidateAddItemToBasket(model, CurrentUserId);
@@ -44,7 +44,7 @@ namespace Talabatak.Controllers.API
                 return Content(HttpStatusCode.BadRequest, baseResponse);
             }
 
-            var Product = db.Products.Find(model.ProductId);
+            var Product = await db.Products.FindAsync(model.ProductId);
             if (Product.Inventory < model.Quantity)
             {
                 baseResponse.ErrorCode = Errors.QuntityNotAvilable;
