@@ -384,15 +384,15 @@ namespace Talabatak.Controllers.API
                     };
                     if (lang.ToLower() == "ar")
                     {
-                        basketItemDTO.Price = item.Price.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? Product.CurrencyAr : "ريال");
-                        basketItemDTO.SubTotal = item.SubTotal.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "ريال" : Product.CurrencyAr);
-                        detailsDTO.Total = Order.Total.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "ريال" : Product.CurrencyAr);
-                        detailsDTO.SubTotal = Order.SubTotal.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "ريال" : Product.CurrencyAr);
+                        basketItemDTO.Price = item.Price.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? Product.CurrencyAr : "جنيها");
+                        basketItemDTO.SubTotal = item.SubTotal.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "جنيها" : Product.CurrencyAr);
+                        detailsDTO.Total = Order.Total.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "جنيها" : Product.CurrencyAr);
+                        detailsDTO.SubTotal = Order.SubTotal.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "جنيها" : Product.CurrencyAr);
 
                     }
                     else
                     {
-                        basketItemDTO.Price = item.Price.ToString() + " " + (string.IsNullOrEmpty(Product.Currency) ? Product.Currency : "ريال");
+                        basketItemDTO.Price = item.Price.ToString() + " " + (string.IsNullOrEmpty(Product.Currency) ? Product.Currency : "جنيها");
                         basketItemDTO.SubTotal = item.SubTotal.ToString() + " " + (string.IsNullOrEmpty(Product.Currency) ? "LE" : Product.Currency);
                         detailsDTO.Total = Order.Total.ToString() + " " + (string.IsNullOrEmpty(Product.Currency) ? "LE" : Product.Currency);
                         detailsDTO.SubTotal = Order.SubTotal.ToString() + " " + (string.IsNullOrEmpty(Product.Currency) ? "LE" : Product.Currency);

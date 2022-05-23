@@ -56,16 +56,16 @@ namespace Talabatak.Controllers.API
             var Products = db.UserFavoriteProducts.Where(x => x.UserId == userid && !x.IsDeleted)
                 .Select(x => x.Product).ToList();
             List<ProductDTO> productDTOs = new List<ProductDTO>();
-            string Currency = "SAR";
-            string CurrencyAr = "ريال";
+            string Currency = "جنيها";
+            string CurrencyAr = "جنيها";
             bool flag = false;
             foreach (var product in Products)
             {
                 if (!flag)
                 {
                     flag = true;
-                    CurrencyAr = (string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr);
-                    Currency = (string.IsNullOrEmpty(product.Currency) ? "SAR" : product.Currency);
+                    CurrencyAr = (string.IsNullOrEmpty(product.CurrencyAr) ? "جنيها" : product.CurrencyAr);
+                    Currency = (string.IsNullOrEmpty(product.Currency) ? "جنيها" : product.Currency);
                 }
                 ProductDTO productDTO = new ProductDTO()
                 {
@@ -77,14 +77,14 @@ namespace Talabatak.Controllers.API
                 };
                 if (lang.ToLower() == "ar")
                 {
-                    productDTO.SingleOfferPrice = product.SingleOfferPrice.ToString() + " " + (string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr);
-                    productDTO.SingleOriginalPrice = product.SingleOriginalPrice.ToString() + " " + (string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr);
+                    productDTO.SingleOfferPrice = product.SingleOfferPrice.ToString() + " " + (string.IsNullOrEmpty(product.CurrencyAr) ? "جنيها" : product.CurrencyAr);
+                    productDTO.SingleOriginalPrice = product.SingleOriginalPrice.ToString() + " " + (string.IsNullOrEmpty(product.CurrencyAr) ? "جنيها" : product.CurrencyAr);
 
                 }
                 else
                 {
-                    productDTO.SingleOfferPrice = product.SingleOfferPrice.ToString() + " " + (string.IsNullOrEmpty(product.Currency) ? "SDG" : product.Currency);
-                    productDTO.SingleOriginalPrice = product.SingleOriginalPrice.ToString() + " " + (string.IsNullOrEmpty(product.Currency) ? "SDG" : product.Currency);
+                    productDTO.SingleOfferPrice = product.SingleOfferPrice.ToString() + " " + (string.IsNullOrEmpty(product.Currency) ? "جنيها" : product.Currency);
+                    productDTO.SingleOriginalPrice = product.SingleOriginalPrice.ToString() + " " + (string.IsNullOrEmpty(product.Currency) ? "جنيها" : product.Currency);
 
                 }
                 if (lang.ToLower() == "ar")

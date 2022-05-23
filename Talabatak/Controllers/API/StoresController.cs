@@ -262,7 +262,7 @@ namespace Talabatak.Controllers.API
         {
             var dto = new List<ProductDTO>();
             string Currency = "LE";
-            string CurrencyAr = "ريال";
+            string CurrencyAr = "جنيها";
             var sizeprice = "";
             var sizeoffer = "";
             bool flag = false;
@@ -294,7 +294,7 @@ namespace Talabatak.Controllers.API
                 if (!flag)
                 {
                     flag = true;
-                    CurrencyAr = (string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr);
+                    CurrencyAr = (string.IsNullOrEmpty(product.CurrencyAr) ? "جنيها" : product.CurrencyAr);
                     Currency = (string.IsNullOrEmpty(product.Currency) ? "LE" : product.Currency);
                 }
                 ProductDTO productDTO = new ProductDTO()
@@ -306,8 +306,8 @@ namespace Talabatak.Controllers.API
                 };
                 if (lang.ToLower() == "ar")
                 {
-                    productDTO.SingleOfferPrice = product.SingleOfferPrice.ToString() + " " + (string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr);
-                    productDTO.SingleOriginalPrice = product.SingleOriginalPrice.ToString() + " " + (string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr);
+                    productDTO.SingleOfferPrice = product.SingleOfferPrice.ToString() + " " + (string.IsNullOrEmpty(product.CurrencyAr) ? "جنيها" : product.CurrencyAr);
+                    productDTO.SingleOriginalPrice = product.SingleOriginalPrice.ToString() + " " + (string.IsNullOrEmpty(product.CurrencyAr) ? "جنيها" : product.CurrencyAr);
 
                 }
                 else

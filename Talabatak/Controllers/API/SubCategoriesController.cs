@@ -34,7 +34,7 @@ namespace Talabatak.Controllers.API
                     var SubCategories = db.Categories.Where(b => !b.IsDeleted).ToList();
                     if (SubCategories != null)
                     {
-                        var Sub = SubCategories.SingleOrDefault(Pk => Pk.Id == id).ProductCategories.ToList();
+                        var Sub = SubCategories.SingleOrDefault(Pk => Pk.Id == id).ProductCategories.Where(d => !d.IsDeleted).ToList();
 
                         IEnumerable<ProductCategoryDTO> Data = Sub.Select(cat => new ProductCategoryDTO
                         {
@@ -61,23 +61,24 @@ namespace Talabatak.Controllers.API
         {
             if (id != 0)
             {
-                var Produtcategories = db.ProductCategories.Where(s => !s.IsDeleted).ToList();
-                if (Produtcategories != null)
+                try
                 {
-                    try
+                    var ProductsCategories = db.ProductCategories.Where(s => !s.IsDeleted);
+                   
+                    if (ProductsCategories != null)
                     {
-                        var AllProduct = Produtcategories.SingleOrDefault(b => b.Id == id).Products.ToList();
+
+                         var Produts = ProductsCategories.SingleOrDefault(b => b.Id == id).Products.Where(b=>!b.IsDeleted).ToList();
 
                         List<ProductDTO> products = new List<ProductDTO>();
-                        foreach (var product in AllProduct)
+                        foreach (var product in Produts)
                         {
-                            int i = 0;
                             products.Add(new ProductDTO()
                             {
                                 ProductId = product.Id,
                                 Name = !string.IsNullOrEmpty(lang) && lang.ToLower() == "ar" ? product.NameAr : product.NameEn,
                                 Description = !string.IsNullOrEmpty(lang) && lang.ToLower() == "ar" ? product.DescriptionAr : product.DescriptionEn,
-                                Images = MediaControl.GetPath(FilePath.Product)+IsFind(product.Id),
+                                Images = IsFind(product.Id),
                                 IsMultipleSize = product.IsMultipleSize,
                                 SingleOriginalPrice = product.SingleOriginalPrice.ToString(),
                                 SingleOfferPrice = product.SingleOfferPrice.ToString(),
@@ -92,23 +93,26 @@ namespace Talabatak.Controllers.API
                                 StoreName = !string.IsNullOrEmpty(lang) && lang.ToLower() == "ar" ? product.Store.NameAr : product.Store.NameAr,
 
                             });
-                           
+
                         }
                         return Ok(products);
-                    }
-                    catch (Exception)
-                    {
-                        return BadRequest("[]");
-                        throw;
-                    }
 
+
+                    }
 
                 }
-
-            }
-
+                catch (Exception)
+                {
+                    return BadRequest("[]");
+                    throw;
+                }
+               
+            } 
             return NotFound();
         }
+        
+          
+    
         // Test For Image
         public string IsFind(long id)
         {
@@ -116,13 +120,13 @@ namespace Talabatak.Controllers.API
             var Data = db.ProductImages.Where(b => !b.IsDeleted).ToList();
             try
             {
-                productImage = Data.Where(b => b.ProductId == id).FirstOrDefault().ImageUrl;
+                productImage = MediaControl.GetPath(FilePath.Product) + Data.FirstOrDefault(b => b.ProductId == id).ImageUrl;
             }
             catch (Exception)
             {
-                productImage = "There is'nt Image";
+                productImage = "";
 
-                throw;
+                
             }
             return productImage;
 

@@ -27,11 +27,11 @@
                     {
                         if (size.OfferPrice.HasValue == true)
                         {
-                            <li>@size.SizeAr بسعر @size.OriginalPrice  @(string.IsNullOrEmpty(Model.CurrencyAr) ? "ريال" : Model.CurrencyAr) قبل الخصم و @size.OfferPrice  @(string.IsNullOrEmpty(Model.CurrencyAr) ? "ريال" : Model.CurrencyAr) بعد الخصم</li>
+                            <li>@size.SizeAr بسعر @size.OriginalPrice  @(string.IsNullOrEmpty(Model.CurrencyAr) ? "جنيها" : Model.CurrencyAr) قبل الخصم و @size.OfferPrice  @(string.IsNullOrEmpty(Model.CurrencyAr) ? "جنيها" : Model.CurrencyAr) بعد الخصم</li>
                         }
                         else
                         {
-                            <li>@size.SizeAr بسعر @size.OriginalPrice  @(string.IsNullOrEmpty(Model.CurrencyAr) ? "ريال" : Model.CurrencyAr)</li>
+                            <li>@size.SizeAr بسعر @size.OriginalPrice  @(string.IsNullOrEmpty(Model.CurrencyAr) ? "جنيها" : Model.CurrencyAr)</li>
                         }
                     }
                 </ul>

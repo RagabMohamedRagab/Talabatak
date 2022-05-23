@@ -16,7 +16,7 @@ namespace Talabatak.Controllers.MVC
     {
         public ActionResult Index()
         {
-            List<Slider> Sliders = db.Slider.Include(x=>x.Store).ToList();
+            List<Slider> Sliders = db.Slider.Include(x=>x.Store).Where(b=>!b.IsDeleted).ToList();
             ViewBag.Sliders = Sliders;
             ViewBag.Stores = new SelectList(db.Stores.ToList(), "Id", "NameAr");
             SliderVM slider = new SliderVM();

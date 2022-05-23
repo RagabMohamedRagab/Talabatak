@@ -38,19 +38,18 @@ namespace Talabatak.Controllers.API
                 baseResponse.ErrorCode = Errors.PageMustBeGreaterThanZero;
                 return Content(HttpStatusCode.BadRequest, baseResponse);
             }
-            var Products = db.Products.Include(d=>d.Sizes).Where(s => s.IsDeleted == false && (CategoryId == -1 ? true: s.SubCategoryId == CategoryId) && s.Category.IsDeleted == false && s.Category.Store.IsDeleted == false && s.Category.Store.IsAccepted == true && s.Category.Store.IsBlocked == false && s.Category.Store.IsHidden == false && s.Category.Store.Latitude.HasValue == true && s.Category.Store.Longitude.HasValue == true).ToList();
-            Products = Products.Where(s => s.SingleOfferPrice.HasValue == true || s.Sizes.Any(w => w.IsDeleted == false && w.OfferPrice.HasValue == true)).OrderBy(w => w.SortingNumber).Skip(Skip).Take(PageSize).ToList();
+            var Products = db.Products.Include(d=>d.Sizes).Where(s => s.IsDeleted == false && (CategoryId == -1 ? true: s.SubCategoryId == CategoryId)).OrderBy(w => w.SortingNumber).Skip(Skip).Take(PageSize).ToList();
             List<ProductDTO> productDTOs = new List<ProductDTO>();
-            string Currency = "SDG";
-            string CurrencyAr = "ريال";
+            string Currency = "جنيها";
+            string CurrencyAr = "جنيها";
             bool flag = false;
             foreach (var product in Products)
             {
                 if (!flag)
                 {
                     flag = true;
-                    CurrencyAr = (string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr);
-                    Currency = (string.IsNullOrEmpty(product.Currency) ? "SDG" : product.Currency);
+                    CurrencyAr = (string.IsNullOrEmpty(product.CurrencyAr) ? "جنيها" : product.CurrencyAr);
+                    Currency = (string.IsNullOrEmpty(product.Currency) ? "جنيها" : product.Currency);
                 }
                 ProductDTO productDTO = new ProductDTO()
                 {
@@ -69,14 +68,14 @@ namespace Talabatak.Controllers.API
                 };
                 if (lang.ToLower() == "ar")
                 {
-                    productDTO.SingleOfferPrice = product.SingleOfferPrice.ToString() + " " + (string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr);
-                    productDTO.SingleOriginalPrice = product.SingleOriginalPrice.ToString() + " " + (string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr);
+                    productDTO.SingleOfferPrice = product.SingleOfferPrice.ToString() + " " + (string.IsNullOrEmpty(product.CurrencyAr) ? "جنيها" : product.CurrencyAr);
+                    productDTO.SingleOriginalPrice = product.SingleOriginalPrice.ToString() + " " + (string.IsNullOrEmpty(product.CurrencyAr) ? "جنيها" : product.CurrencyAr);
 
                 }
                 else
                 {
-                    productDTO.SingleOfferPrice = product.SingleOfferPrice.ToString() + " " + (string.IsNullOrEmpty(product.Currency) ? "SDG" : product.Currency);
-                    productDTO.SingleOriginalPrice = product.SingleOriginalPrice.ToString() + " " + (string.IsNullOrEmpty(product.Currency) ? "SDG" : product.Currency);
+                    productDTO.SingleOfferPrice = product.SingleOfferPrice.ToString() + " " + (string.IsNullOrEmpty(product.Currency) ? "جنيها" : product.Currency);
+                    productDTO.SingleOriginalPrice = product.SingleOriginalPrice.ToString() + " " + (string.IsNullOrEmpty(product.Currency) ? "جنيها" : product.Currency);
 
                 }
                 if (lang.ToLower() == "ar")

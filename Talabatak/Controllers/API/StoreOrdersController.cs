@@ -196,7 +196,7 @@ namespace Talabatak.Controllers.API
             if (user == null)
                 return Errors.UserNotAuthorized;
 
-            var Product = db.Products.FirstOrDefault(s => s.Id == model.ProductId && s.IsDeleted == false && s.Category.IsDeleted == false && s.Category.Store.IsDeleted == false && s.Category.Store.IsAccepted == true && s.Category.Store.IsBlocked == false && s.Category.Store.IsHidden == false && s.Category.Store.Latitude.HasValue == true && s.Category.Store.Longitude.HasValue == true);
+            var Product = db.Products.FirstOrDefault(s => s.Id == model.ProductId && s.IsDeleted == false);
             if (Product == null)
                 return Errors.ProductNotFound;
 
@@ -307,11 +307,11 @@ namespace Talabatak.Controllers.API
                     };
                     if (lang.ToLower() == "ar")
                     {
-                        basketItemDTO.Price = item.Price.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "ريال" : Product.CurrencyAr);
-                        basketItemDTO.SubTotal = item.SubTotal.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "ريال" : Product.CurrencyAr);
-                        basketDetailsDTO.Total = UserOrder.Total.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "ريال" : Product.CurrencyAr);
-                        basketDetailsDTO.SubTotal = UserOrder.SubTotal.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "ريال" : Product.CurrencyAr);
-                        basketDetailsDTO.DeliveryFees = UserOrder.DeliveryFees.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "ريال" : Product.CurrencyAr);
+                        basketItemDTO.Price = item.Price.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "جنيها" : Product.CurrencyAr);
+                        basketItemDTO.SubTotal = item.SubTotal.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "جنيها" : Product.CurrencyAr);
+                        basketDetailsDTO.Total = UserOrder.Total.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "جنيها" : Product.CurrencyAr);
+                        basketDetailsDTO.SubTotal = UserOrder.SubTotal.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "جنيها" : Product.CurrencyAr);
+                        basketDetailsDTO.DeliveryFees = UserOrder.DeliveryFees.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "جنيها" : Product.CurrencyAr);
                     }
                     else
                     {
@@ -768,11 +768,11 @@ namespace Talabatak.Controllers.API
                     };
                     if (lang.ToLower() == "ar")
                     {
-                        basketItemDTO.Price = item.Price.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "ريال":Product.CurrencyAr );
-                        basketItemDTO.SubTotal = item.SubTotal.ToString()+ " "+ (string.IsNullOrEmpty(Product.CurrencyAr) ? "ريال" : Product.CurrencyAr);
-                        detailsDTO.Total = Order.Total.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "ريال" : Product.CurrencyAr);
-                        detailsDTO.SubTotal = Order.SubTotal.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "ريال" : Product.CurrencyAr);
-                        detailsDTO.DeliveryFees = Order.DeliveryFees.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "ريال" : Product.CurrencyAr);
+                        basketItemDTO.Price = item.Price.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "جنيها" : Product.CurrencyAr );
+                        basketItemDTO.SubTotal = item.SubTotal.ToString()+ " "+ (string.IsNullOrEmpty(Product.CurrencyAr) ? "جنيها" : Product.CurrencyAr);
+                        detailsDTO.Total = Order.Total.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "جنيها" : Product.CurrencyAr);
+                        detailsDTO.SubTotal = Order.SubTotal.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "جنيها" : Product.CurrencyAr);
+                        detailsDTO.DeliveryFees = Order.DeliveryFees.ToString() + " " + (string.IsNullOrEmpty(Product.CurrencyAr) ? "جنيها" : Product.CurrencyAr);
                     }
                     else
                     {

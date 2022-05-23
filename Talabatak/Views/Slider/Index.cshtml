@@ -63,7 +63,7 @@
                         <th>الترتيب</th>
                         <th>الصورة</th>
                         <th>المتجر</th>
-                        <th>الحذف</th>
+                       
                         <th>التحكم</th>
                     </tr>
                 </thead>
@@ -85,16 +85,7 @@
                                     <span class="badge" style="background-color:red">بدون</span>
                                 }
                             </td>
-                            <td>
-                                @if (item.IsDeleted == true)
-                                {
-                                    <span class="badge" style="background-color:red">محذوف</span>
-                                }
-                                else
-                                {
-                                    <span class="badge" style="background-color:forestgreen">غير محذوف</span>
-                                }
-                            </td>
+                           
                             <td>
                                 <button style="margin-bottom:10px" type="button" id="change-sorting-btn_@item.Id" onclick="ChangeSortingNumber('@item.Id','@item.SortingNumber')">تغير الترتيب</button> |
                                 @Html.ActionLink("تعديل", "Edit", new { id = item.Id }) |
@@ -141,7 +132,6 @@
         {
            
             $.ajax({
-                   
                     url: "@Url.Action("DeleteImage", "Slider")",
                 type: "POST",
                 data: { ImageId: ImgId },

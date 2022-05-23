@@ -115,12 +115,12 @@ else
                                 {
                                     if (product.SingleOfferPrice.HasValue == true)
                                     {
-                                        <p>السعر قبل: @product.SingleOriginalPrice @(string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr)</p>
-                                        <p>السعر بعد: @product.SingleOfferPrice @(string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr)</p>
+                                        <p>السعر قبل: @product.SingleOriginalPrice @(string.IsNullOrEmpty(product.CurrencyAr) ? "جنيها" : product.CurrencyAr)</p>
+                                        <p>السعر بعد: @product.SingleOfferPrice @(string.IsNullOrEmpty(product.CurrencyAr) ? "جنيها" : product.CurrencyAr)</p>
                                     }
                                     else
                                     {
-                                        <p>السعر: @product.SingleOriginalPrice @(string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr)</p>
+                                        <p>السعر: @product.SingleOriginalPrice @(string.IsNullOrEmpty(product.CurrencyAr) ? "جنيها" : product.CurrencyAr)</p>
                                     }
                                 }
                                 else
@@ -131,11 +131,11 @@ else
                                     {
                                         if (size.OfferPrice.HasValue == true)
                                         {
-                                            <li>@size.SizeAr بسعر @size.OriginalPrice  @(string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr) قبل الخصم و @size.OfferPrice  @(string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr) بعد الخصم</li>
+                                            <li>@size.SizeAr بسعر @size.OriginalPrice  @(string.IsNullOrEmpty(product.CurrencyAr) ? "جنيها" : product.CurrencyAr) قبل الخصم و @size.OfferPrice  @(string.IsNullOrEmpty(product.CurrencyAr) ? "جنيها" : product.CurrencyAr) بعد الخصم</li>
                                         }
                                         else
                                         {
-                                            <li>@size.SizeAr بسعر @size.OriginalPrice  @(string.IsNullOrEmpty(product.CurrencyAr) ? "ريال" : product.CurrencyAr)</li>
+                                            <li>@size.SizeAr بسعر @size.OriginalPrice  @(string.IsNullOrEmpty(product.CurrencyAr) ? "جنيها" : product.CurrencyAr)</li>
                                         }
                                     }
                                 </ul>

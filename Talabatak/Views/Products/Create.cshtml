@@ -101,7 +101,7 @@
                             </div>
 
                             <hr />
-                            <div class="row" style="margin:10px">
+                            <div class="row" style="margin:10px;display:none">
                                 <p>- اذا كان المنتج بدون احجام مختلفه ، برجاء كتابة سعر المنتج فى الحقل التالى</p>
                                 <p>- فى حاله ما اذا كان هناك خصم ، برجاء كتابه السعر قبل وبعد ، فى حاله عدم وجود خصم برجاء ترك سعر المنتج بعد الخصم فارغاً</p>
                             </div>
@@ -126,7 +126,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row" style="margin:10px">
+                            <div class="row" style="margin:10px;display:none">
 
                                 <div class="col-lg-6">
                                     <div class="form-group">
@@ -229,7 +229,7 @@
         })
         function AddSizeRow() {
             var wrapper = $('.sizes-field-wrapper');
-            var fieldHTML = '<div> <br><div class="col-lg-5" style="margin-bottom:10px"> <div class="form-group"> <label class="col-sm-5 control-label required">الحجم بالعربى: </label> <div class="col-sm-7"><input type="text" required="" name="SizesAr[]" class="form-control"></div></div></div><div class="col-lg-5" style="margin-bottom:10px"> <div class="form-group"> <label class="col-sm-5 control-label required">الحجم بالانجليزى: </label> <div class="col-sm-7"><input type="text" required="" name="SizesEn[]" class="form-control"></div></div></div><div class="col-lg-2" style="margin-bottom:10px"><button type="button" class="btn btn-danger size_remove_button"><i class="fa fa-times"></i></button></div><div class="row" style="margin:10px;"> <div class="col-lg-5"> <div class="form-group"> <label class="col-sm-5 control-label required">السعر:</label> <div class="col-sm-7"> <div class="input-group"> <input name="OriginalPrices[]" class="form-control valid" type="number" step="any" required=""> <span class="input-group-addon">ريال</span> </div></div></div></div><div class="col-lg-5"> <div class="form-group"> <label class="col-sm-5 control-label">السعر بعد الخصم:</label> <div class="col-sm-7"> <div class="input-group"> <input name="OfferPrices[]" class="form-control valid" type="number" step="any"> <span class="input-group-addon">ريال</span> </div></div></div></div></div><hr /></div>'; //New input field html
+            var fieldHTML = '<div> <br><div class="col-lg-5" style="margin-bottom:10px"> <div class="form-group"> <label class="col-sm-5 control-label required">الحجم بالعربى: </label> <div class="col-sm-7"><input type="text" required="" name="SizesAr[]" class="form-control"></div></div></div><div class="col-lg-5" style="margin-bottom:10px"> <div class="form-group"> <label class="col-sm-5 control-label required">الحجم بالانجليزى: </label> <div class="col-sm-7"><input type="text" required="" name="SizesEn[]" class="form-control"></div></div></div><div class="col-lg-2" style="margin-bottom:10px"><button type="button" class="btn btn-danger size_remove_button"><i class="fa fa-times"></i></button></div><div class="row" style="margin:10px;"> <div class="col-lg-5"> <div class="form-group"> <label class="col-sm-5 control-label required">السعر:</label> <div class="col-sm-7"> <div class="input-group"> <input name="OriginalPrices[]" class="form-control valid" type="number" step="any" required=""> <span class="input-group-addon">جنيها</span> </div></div></div></div><div class="col-lg-5"> <div class="form-group"> <label class="col-sm-5 control-label">السعر بعد الخصم:</label> <div class="col-sm-7"> <div class="input-group"> <input name="OfferPrices[]" class="form-control valid" type="number" step="any"> <span class="input-group-addon">جنيها</span> </div></div></div></div></div><hr /></div>'; //New input field html
             $(wrapper).append(fieldHTML);
         }
     </script>

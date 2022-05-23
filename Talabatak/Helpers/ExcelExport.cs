@@ -63,7 +63,7 @@ namespace Talabatak.Helpers
                     DriverName = "بدون";
                 }
                 dt.Rows.Add(item.Items.FirstOrDefault().Product.Category.Store.NameAr,
-                     status, item.Code, username, item.Total.ToString() + " ريال", Date, DriverName);
+                     status, item.Code, username, item.Total.ToString() + "جنيها", Date, DriverName);
             }
             return dt;
         }

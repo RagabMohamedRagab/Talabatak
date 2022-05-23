@@ -64,7 +64,7 @@ namespace Talabatak.Controllers.API
             baseResponse.Data = new
             {
                 Kilometers = TotalEstimatedDistance.ToString("N2") + " " + (!string.IsNullOrEmpty(lang) && lang.ToLower() == "ar" ? " كم" : " KM"),
-                DeliveryFees = OtlobAy7agaOrderActions.CalculateDeliveryFees(Estimated.TotalEstimatedDistance).ToString("N2") + " " + (!string.IsNullOrEmpty(lang) && lang.ToLower() == "ar" ? " ريال" : "LE"),
+                DeliveryFees = OtlobAy7agaOrderActions.CalculateDeliveryFees(Estimated.TotalEstimatedDistance).ToString("N2") + " " + (!string.IsNullOrEmpty(lang) && lang.ToLower() == "ar" ? " جنيها" : "LE"),
             };
             return Ok(baseResponse);
         }
