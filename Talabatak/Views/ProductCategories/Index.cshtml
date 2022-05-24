@@ -98,8 +98,8 @@
                     <th>الترتيب</th>
                     <th>اسم القسم الفرعي بالعربى</th>
                     <th>اسم القسم  الفرعي بالانجليزى</th>
+                    <td>اسم القسم الاساسي</td>
                     <th>الصوره</th>
-                 
                     <th>التحكم</th>
                 </tr>
             </thead>
@@ -113,6 +113,9 @@
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.NameEn)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Category.NameAr)
                         </td>
                         <td>
                             @if (!string.IsNullOrEmpty(item.ImageUrl))

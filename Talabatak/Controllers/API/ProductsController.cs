@@ -62,20 +62,20 @@ namespace Talabatak.Controllers.API
                     {
                         SizeId = b.Id,
                         Name = !string.IsNullOrEmpty(lang) && lang.ToLower() == "ar" ? b.SizeAr : b.SizeEn,
-                        OfferPrice = b.OfferPrice.ToString() + " " + (lang.ToLower() == "ar" ? CurrencyAr : Currency),
-                        OriginalPrice = b.OriginalPrice.ToString() + " " + (lang.ToLower() == "ar" ? CurrencyAr : Currency),
+                        OfferPrice = b.OfferPrice.ToString(),
+                        OriginalPrice = b.OriginalPrice.ToString() ,
                     }).ToList()
                 };
                 if (lang.ToLower() == "ar")
                 {
-                    productDTO.SingleOfferPrice = product.SingleOfferPrice.ToString() + " " + (string.IsNullOrEmpty(product.CurrencyAr) ? "جنيها" : product.CurrencyAr);
-                    productDTO.SingleOriginalPrice = product.SingleOriginalPrice.ToString() + " " + (string.IsNullOrEmpty(product.CurrencyAr) ? "جنيها" : product.CurrencyAr);
+                    productDTO.SingleOfferPrice = "";
+                    productDTO.SingleOriginalPrice = "";
 
                 }
                 else
                 {
-                    productDTO.SingleOfferPrice = product.SingleOfferPrice.ToString() + " " + (string.IsNullOrEmpty(product.Currency) ? "جنيها" : product.Currency);
-                    productDTO.SingleOriginalPrice = product.SingleOriginalPrice.ToString() + " " + (string.IsNullOrEmpty(product.Currency) ? "جنيها" : product.Currency);
+                    productDTO.SingleOfferPrice = "";
+                    productDTO.SingleOriginalPrice = "";
 
                 }
                 if (lang.ToLower() == "ar")
