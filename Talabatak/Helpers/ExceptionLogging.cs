@@ -15,7 +15,7 @@ namespace Talabatak.Helpers
             ErrorlineNo = ex.StackTrace.Substring(ex.StackTrace.Length - 7, 7);
             Errormsg = ex.GetType().Name.ToString();
             extype = ex.GetType().ToString();
-            exurl = context.Current.Request.Url.ToString();
+            //exurl = context.Current.Request.Url.ToString();
             ErrorLocation = ex.Message.ToString();
 
             try

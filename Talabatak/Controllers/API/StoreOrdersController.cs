@@ -413,7 +413,7 @@ namespace Talabatak.Controllers.API
         public IHttpActionResult DeleteBasketItem(long BasketItemId)
         {
             CurrentUserId = User.Identity.GetUserId();
-            var BasketItem = db.StoreOrderItems.FirstOrDefault(x => x.Id == BasketItemId && x.Order.UserId == CurrentUserId);
+            var BasketItem = db.StoreOrderItems.Include(b=>b.Order).FirstOrDefault(x => x.Id == BasketItemId || x.Order.UserId == CurrentUserId);
             if (BasketItem == null)
             {
                 baseResponse.ErrorCode = Errors.BasketItemNotFound;

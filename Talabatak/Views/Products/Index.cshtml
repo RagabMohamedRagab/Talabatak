@@ -9,7 +9,7 @@
     }
 }
 
-@if (User.IsInRole("Store") && Store == null)
+@*@if (User.IsInRole("Store") && Store == null)
 {
     if (Stores == null || Stores.Count() <= 0)
     {
@@ -32,8 +32,7 @@
         }
     }
 }
-else
-{
+else*@
     <div class="panel panel-primary">
         <div class="panel-heading">
             <h3 class="panel-title"><i class="fa fa-fw fa-tags"></i> @(ViewBag.Tit!=null? "المنتجات المحذوفة" : "المنتجات المتاحة")</h3>
@@ -149,7 +148,7 @@ else
             </div>
         </div>
     </div>
-}
+
 
 
 @section Scripts{

@@ -31,6 +31,8 @@
                             @Html.HiddenFor(d => d.RestoredOn)
                             @Html.HiddenFor(d => d.SortingNumber)
 
+                           
+
                             <div class="row" style="margin:10px;">
                                 <div class="col-lg-6">
                                     <div class="form-group">
@@ -63,26 +65,38 @@
                                             <label for="Image" class="col-sm-5 control-label">صوره القسم:</label>
                                             <div class="col-sm-7">
                                                 <div class="input-group">
-                                                    <img src="~/Content/Images/Categories/@Model.ImageUrl" width="150" />
+                                                    <img src="@Url.Content(Model.ImageUrl != null ? ("~/Content/Images/Categories/"+ Model.ImageUrl) : "~/Content/assets/imgs/unnamed.jpg")" width="150" height="50" />
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             }
-                            <div class="row" style="margin:10px">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label for="Image" class="col-sm-5 control-label">تعديل صوره القسم:</label>
-                                        <div class="col-sm-7">
-                                            <div class="input-group">
-                                                <input class="form-control" type="file" name="Image" id="Image" accept="image/*" />
-                                                @Html.ValidationMessageFor(s => s.ImageUrl, "", new { @class = "text-danger" })
-                                            </div>
-                                        </div>
+                    <div class="row" style="margin:10px">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="Image" class="col-sm-5 control-label">تعديل صوره القسم:</label>
+                                <div class="col-sm-7">
+                                    <div class="input-group">
+                                        <input class="form-control" type="file" name="Image" id="Image" accept="image/*" />
+                                        @Html.ValidationMessageFor(s => s.ImageUrl, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="CategoryId" class="col-sm-5 control-label required">القسم الاساسيه: </label>
+                                <div class="col-sm-7">
+
+                                    @Html.DropDownListFor(s => s.CategoryId, new SelectList(ViewBag.Categories, "Id", "NameAr"), new { @class = "form-control", required = true })
+                                    @Html.ValidationMessageFor(d => d.CategoryId, "", new { @class = "text-danger" })
+                                    <input type="text" value="" hidden />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                             <button type="submit" class="btn btn-success">تعديل</button>
                         }
                     </div>

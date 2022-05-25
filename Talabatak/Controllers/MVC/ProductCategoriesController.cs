@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -42,7 +43,7 @@ namespace Talabatak.Controllers.MVC
 
             if (ModelState.IsValid)
             {
-                var LatestSortingNumber = db.ProductCategories.Include(b => b.Store).Select(s => s.SortingNumber).DefaultIfEmpty(0).Max();
+                var LatestSortingNumber = db.ProductCategories.Include(b=>b.Category).Include(b => b.Store).Select(s => s.SortingNumber).DefaultIfEmpty(0).Max();
                 category.SortingNumber = LatestSortingNumber + 1;
                 if (Image != null)
                 {
@@ -50,7 +51,7 @@ namespace Talabatak.Controllers.MVC
                 }
                 db.ProductCategories.Add(category);
                 db.SaveChanges();
-                ViewBag.Categories = db.ProductCategories.Where(x => !x.IsDeleted).ToList();
+                ViewBag.Categories = db.ProductCategories.Include(b=>b.Products).Where(x => !x.IsDeleted).ToList();
                 ViewBag.ProductCategories = db.ProductCategories.Include(b => b.Category).Where(x => !x.IsDeleted).ToList();
                 return RedirectToAction(nameof(Index));
             }
@@ -64,38 +65,44 @@ namespace Talabatak.Controllers.MVC
             if (id == null)
                 return RedirectToAction("Index");
             ProductCategory category = db.ProductCategories.Find(id);
+            ViewBag.Categories = db.Categories.Include(b => b.ProductCategories).Where(x => !x.IsDeleted).ToList();
             if (category == null)
                 return RedirectToAction("Index");
             return View(category);
         }
 
         [HttpPost]
-        public ActionResult Edit(ProductCategory category, HttpPostedFileBase Image)
+        public ActionResult Edit([Bind(Include = "Id,NameAr,NameEn,ImageUrl,CategoryId,SortingNumber")] ProductCategory productCategory, HttpPostedFileBase Image)
         {
+
+           
             if (Image != null)
-            {
-                bool IsImage = CheckFiles.IsImage(Image);
-                if (!IsImage)
                 {
-                    ModelState.AddModelError("", "الصوره غير صحيحة");
-                }
-            }
-            if (ModelState.IsValid)
-            {
-                if (Image != null)
-                {
-                    if (category.ImageUrl != null)
+                    bool IsImage = CheckFiles.IsImage(Image);
+                    if (!IsImage)
                     {
-                        MediaControl.Delete(FilePath.Category, category.ImageUrl);
+                        ModelState.AddModelError("", "الصوره غير صحيحة");
                     }
-                    category.ImageUrl = MediaControl.Upload(FilePath.Category, Image);
                 }
-                db.Entry(category).State = EntityState.Modified;
-                CRUD<ProductCategory>.Update(category);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (ModelState.IsValid)
+                {
+                    if (Image != null)
+                    {
+                        if (productCategory.ImageUrl != null)
+                        {
+                            MediaControl.Delete(FilePath.Category, productCategory.ImageUrl);
+                        }
+                        productCategory.ImageUrl = MediaControl.Upload(FilePath.Category, Image);
+
+                    }
+                  
+                db.Entry(productCategory).State = EntityState.Modified;
+                CRUD<ProductCategory>.Update(productCategory);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                
             }
-            return View(category);
+            return View(productCategory);
         }
         public ActionResult GetCategories(long StoreId)
         {
