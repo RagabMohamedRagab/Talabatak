@@ -80,11 +80,11 @@ namespace Talabatak.Controllers.API
                 }
                 if (lang.ToLower() == "ar")
                 {
-                    productDTO.StoreName = db.Stores.FirstOrDefault(x => x.Id == productDTO.StoreId).NameAr;
+                    productDTO.StoreName = "الفتح";
                 }
                 else
                 {
-                    productDTO.StoreName = db.Stores.FirstOrDefault(x => x.Id == productDTO.StoreId).NameEn;
+                    productDTO.StoreName = "ElFath";
 
                 }
 
@@ -92,8 +92,12 @@ namespace Talabatak.Controllers.API
                 {
                     foreach (var image in product.Images.Where(s => s.IsDeleted == false))
                     {
-                        productDTO.Images=MediaControl.GetPath(FilePath.Product) + image.ImageUrl;
+                        productDTO.Images = MediaControl.GetPath(FilePath.Product)+ image.ImageUrl ;
                     }
+                }
+                else
+                {
+                    productDTO.Images = "";
                 }
                 //if (product.Sizes != null && product.Sizes.Count(s => s.IsDeleted == false) > 0)
                 //{

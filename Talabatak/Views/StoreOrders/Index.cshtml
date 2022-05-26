@@ -159,9 +159,7 @@ else
         <p>بدون</p>}
             </td>
             <td>
-                @if (!Item.Product.Category.Store.DeliveryBySystem)
-                {
-        <a class="btn  btn-sm btn-primary" style="margin-bottom:10px" href="@Url.Action("ChangeDriver", new { OrderId = order.Id, ReturnUrl = Request.Url })"> تغير السائق</a>}
+               
                 <a class="btn btn-sm btn-info" style="margin-bottom:10px" href="@Url.Action("Details", new { OrderId = order.Id, ReturnUrl = Request.Url })"><i class="fa fa-info-circle"></i> المعلومات</a> |
                 <a class="btn btn-sm btn-default" style="margin-bottom:10px" href="@Url.Action("Chat", new { OrderId = order.Id, ReturnUrl = Request.Url })"><i class="fa fa-comments"></i> المحادثات</a>|
 

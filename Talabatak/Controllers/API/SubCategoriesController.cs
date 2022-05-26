@@ -104,7 +104,7 @@ namespace Talabatak.Controllers.API
                 catch (Exception)
                 {
                     return BadRequest("[]");
-                    throw;
+                   
                 }
                
             } 

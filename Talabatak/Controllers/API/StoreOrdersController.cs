@@ -196,11 +196,11 @@ namespace Talabatak.Controllers.API
             if (user == null)
                 return Errors.UserNotAuthorized;
 
-            var Product = db.Products.FirstOrDefault(s => s.Id == model.ProductId && s.IsDeleted == false);
+            var Product = db.Products.Include(b=>b.Store).Include(b=>b.Category).FirstOrDefault(s => s.Id == model.ProductId && s.IsDeleted == false);
             if (Product == null)
                 return Errors.ProductNotFound;
 
-            if (Product.Category.Store.IsOpen == false)
+            if (Product.Store.IsOpen == false)
             {
                 return Errors.StoreIsClosed;
             }
@@ -413,25 +413,25 @@ namespace Talabatak.Controllers.API
         public IHttpActionResult DeleteBasketItem(long BasketItemId)
         {
             CurrentUserId = User.Identity.GetUserId();
-            var BasketItem = db.StoreOrderItems.Include(b=>b.Order).FirstOrDefault(x => x.Id == BasketItemId || x.Order.UserId == CurrentUserId);
+            var BasketItem = db.StoreOrderItems.Include(b=>b.Order).Where(x => !x.IsDeleted).FirstOrDefault( x=>x.ProductId == BasketItemId );
             if (BasketItem == null)
             {
                 baseResponse.ErrorCode = Errors.BasketItemNotFound;
                 return Content(HttpStatusCode.BadRequest, baseResponse);
             }
 
-            if (BasketItem.Order.Status != StoreOrderStatus.Initialized)
-            {
-                baseResponse.ErrorCode = Errors.BasketItemNotFound;
-                return Content(HttpStatusCode.BadRequest, baseResponse);
-            }
+            //if (BasketItem.Order.Status != StoreOrderStatus.Initialized)
+            //{
+            //    baseResponse.ErrorCode = Errors.BasketItemNotFound;
+            //    return Content(HttpStatusCode.BadRequest, baseResponse);
+            //}
 
-            CRUD<StoreOrderItem>.Delete(BasketItem);
-            StoreOrderActions.CalculateOrderPrice(BasketItem.Order);
-            if (BasketItem.Order.Items.All(d => d.IsDeleted))
-            {
+            BasketItem.IsDeleted = true;
+            BasketItem.IsModified = true;
+            BasketItem.DeletedOn = DateTime.Now.ToUniversalTime(); 
+            db.SaveChanges();
+            StoreOrderActions.CalculateOrderPrice(BasketItem.Order);            
                 CRUD<StoreOrder>.Delete(BasketItem.Order);
-            }
             db.SaveChanges();
             return Ok(baseResponse);
         }
@@ -457,7 +457,7 @@ namespace Talabatak.Controllers.API
         public async Task<IHttpActionResult> CancelOrder(long OrderId)
         {
             string CurrentUserId = User.Identity.GetUserId();
-            var UserOrder = db.StoreOrders.FirstOrDefault(d => d.IsDeleted == false && (d.Status == StoreOrderStatus.Placed || d.Status == StoreOrderStatus.Delivering || d.Status == StoreOrderStatus.Preparing) && d.UserId == CurrentUserId && d.Id == OrderId);
+            var UserOrder = db.StoreOrders.Where(b => !b.IsDeleted).FirstOrDefault(b => b.Id == OrderId);
             if (UserOrder != null)
             {
                 UserOrder.Status = StoreOrderStatus.Cancelled;
